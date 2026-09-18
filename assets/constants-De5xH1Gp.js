@@ -1,0 +1,1 @@
+var e={TEXT:`text`,IMAGE:`image`,VIDEO:`video`,AUDIO:`audio`,FILE:`file`},t=[{value:`everyone`,labelKey:`settings.everyone`},{value:`contacts`,labelKey:`settings.contacts`},{value:`nobody`,labelKey:`settings.nobody`}],n={LIGHT:`light`,DARK:`dark`,SYSTEM:`system`},r=[{code:`en`,name:`English`,dir:`ltr`},{code:`ar`,name:`العربية`,dir:`rtl`}];export{n as i,e as n,t as r,r as t};
