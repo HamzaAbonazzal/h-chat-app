@@ -39,9 +39,13 @@ export const notificationService = {
     if (!notificationService.isSupported()) return null;
 
     try {
+      // const registration = await navigator.serviceWorker.register(
+      //   "/firebase-messaging-sw.js",
+      //   { scope: "/" },
+      // );
       const registration = await navigator.serviceWorker.register(
-        "/firebase-messaging-sw.js",
-        { scope: "/" },
+        `${import.meta.env.BASE_URL}firebase-messaging-sw.js`,
+        { scope: import.meta.env.BASE_URL },
       );
       console.log("✅ SW registered:", registration.scope);
       return registration;

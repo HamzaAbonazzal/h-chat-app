@@ -12,9 +12,15 @@ i18n
     supportedLngs: ["en", "ar"],
     ns: ["translation"],
     defaultNS: "translation",
+    // backend: {
+    //   loadPath: "/locales/{{lng}}/{{ns}}.json",
+    //   // ⭐ منع التخزين المؤقت لملفات الترجمة
+    // },
+    // src/i18n.js أو ملف التهيئة
     backend: {
-      loadPath: "/locales/{{lng}}/{{ns}}.json",
-      // ⭐ منع التخزين المؤقت لملفات الترجمة
+      loadPath: import.meta.env.DEV
+        ? "/locales/{{lng}}/{{ns}}.json" // في التطوير، المسار من الجذر
+        : `${import.meta.env.BASE_URL}locales/{{lng}}/{{ns}}.json`, // في الإنتاج، أضف /h-chat-app/
       requestOptions: {
         cache: "no-store",
       },
