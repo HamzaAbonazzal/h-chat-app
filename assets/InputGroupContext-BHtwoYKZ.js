@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-hePW80VL.js";import{D as t}from"./prop-types-h_orAKp9.js";var n=e(t()).createContext(null);n.displayName=`InputGroupContext`;export{n as t};
