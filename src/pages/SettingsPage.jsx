@@ -18,15 +18,17 @@ import ProfileSettings from "../components/settings/ProfileSettings";
 import PrivacySettings from "../components/settings/PrivacySettings";
 import BlockedUsersList from "../components/settings/BlockedUsersList";
 import Avatar from "../components/common/Avatar";
+import DeleteAccountModal from "../components/settings/DeleteAccountModal";
 
 const SettingsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, deleteAccount } = useAuth();
 
   const [activeTab, setActiveTab] = useState("general");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -155,6 +157,39 @@ const SettingsPage = () => {
                   <>
                     <h5 className="fw-bold mb-4">{t("settings.account")}</h5>
                     <ProfileSettings />
+                    {/* ⭐ Danger Zone */}
+                    <div className="mt-5 pt-4 border-top border-danger">
+                      <h6 className="fw-bold text-danger mb-3">
+                        <i className="bi bi-exclamation-triangle me-2"></i>
+                        {t("settings.deleteAccount.dangerZone")}
+                      </h6>
+
+                      <div className="d-flex justify-content-between align-items-start p-3 border border-danger rounded-3">
+                        <div className="me-3">
+                          <div className="fw-semibold small">
+                            {t("settings.deleteAccount.title")}
+                          </div>
+                          <div className="text-muted small mt-1">
+                            {t("settings.deleteAccount.description")}
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline-danger"
+                          onClick={() => setShowDeleteModal(true)}
+                          className="flex-shrink-0"
+                        >
+                          <i className="bi bi-trash me-2"></i>
+                          {t("settings.deleteAccount.button")}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* ⭐ Modal */}
+                    <DeleteAccountModal
+                      show={showDeleteModal}
+                      onHide={() => setShowDeleteModal(false)}
+                      onConfirm={deleteAccount}
+                    />
                   </>
                 )}
 
@@ -198,11 +233,7 @@ const SettingsPage = () => {
           >
             {t("common.cancel")}
           </Button>
-          <Button
-            variant="danger"
-            onClick={handleLogout}
-            disabled={loggingOut}
-          >
+          <Button variant="danger" onClick={handleLogout} disabled={loggingOut}>
             {loggingOut ? (
               <Spinner animation="border" size="sm" />
             ) : (

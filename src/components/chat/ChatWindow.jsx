@@ -25,6 +25,7 @@ const ChatWindow = ({
   onConversationDeleted,
   onLeft,
   onConversationUpdated,
+  onStartCall,
 }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -84,7 +85,7 @@ const ChatWindow = ({
 
   const pinnedIds = useMemo(
     () => new Set(pinnedMessages.map((m) => m._id)),
-    [pinnedMessages]
+    [pinnedMessages],
   );
 
   useEffect(() => {
@@ -149,7 +150,7 @@ const ChatWindow = ({
     try {
       const result = await conversationService.toggleMute(
         conversation._id,
-        duration
+        duration,
       );
       onConversationUpdated?.({
         ...conversation,
@@ -215,7 +216,7 @@ const ChatWindow = ({
         (m.type === "image" || m.type === "video") &&
         (m.mediaUrl || m._localPreviewUrl) &&
         !m.isDeleted &&
-        !m._isPending
+        !m._isPending,
     );
 
     const allMedia = mediaMessages.map((m) => ({
@@ -255,7 +256,7 @@ const ChatWindow = ({
         conversation._id,
         query,
         1,
-        50
+        50,
       );
       setSearchResults(res.data || []);
       setCurrentResultIndex(0);
@@ -302,7 +303,7 @@ const ChatWindow = ({
   }
 
   return (
-    <div className="h-100 d-flex flex-column">
+    <div className="h-100 d-flex flex-column overflow-hidden">
       {searchOpen ? (
         <SearchBar
           onSearch={handleSearch}
@@ -325,7 +326,8 @@ const ChatWindow = ({
             onToggleMute={handleToggleMute}
             onToggleArchive={handleToggleArchive}
             onOpenDisappearing={() => setShowDisappearing(true)}
-            onClearChat={handleClearChat}
+              onClearChat={handleClearChat}
+                onStartCall={onStartCall} // ⭐ جديد
           />
 
           {pinnedMessages.length > 0 && (
@@ -369,17 +371,17 @@ const ChatWindow = ({
       </div>
 
       <TypingIndicator users={typingList} />
-
-      <MessageInput
-        onSendText={sendMessage}
-        onSendMedia={sendMediaMessage}
-        onTyping={startTyping}
-        onStopTyping={stopTyping}
-        replyingTo={replyingTo}
-        onCancelReply={handleCancelReply}
-        conversationId={conversation._id}
-      />
-
+      <div className="message-input-container">
+        <MessageInput
+          onSendText={sendMessage}
+          onSendMedia={sendMediaMessage}
+          onTyping={startTyping}
+          onStopTyping={stopTyping}
+          replyingTo={replyingTo}
+          onCancelReply={handleCancelReply}
+          conversationId={conversation._id}
+        />
+      </div>
       <ForwardModal
         show={!!forwardingMessage}
         onHide={() => setForwardingMessage(null)}

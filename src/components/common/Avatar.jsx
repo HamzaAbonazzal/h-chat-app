@@ -1,9 +1,12 @@
 import { Image } from "react-bootstrap";
-import { getInitials } from "../../utils/formatters";
+import { useTranslation } from "react-i18next";
+import { getInitials, getDisplayName } from "../../utils/formatters";
 
 const Avatar = ({ user, size = 40, showOnline = false, isOnline = false }) => {
-  const avatarUrl = user?.avatar;
-  const name = user?.username || "?";
+  const { t } = useTranslation();
+
+  const displayName = getDisplayName(user, t("chat.deletedAccount"));
+  const avatarUrl = user?.isDeleted ? "" : user?.avatar;
 
   const containerStyle = {
     width: size,
@@ -33,12 +36,12 @@ const Avatar = ({ user, size = 40, showOnline = false, isOnline = false }) => {
   return (
     <div style={containerStyle}>
       {avatarUrl ? (
-        <Image src={avatarUrl} style={imageStyle} alt={name} roundedCircle />
+        <Image src={avatarUrl} style={imageStyle} alt={displayName} roundedCircle />
       ) : (
         <div
           style={{
             ...imageStyle,
-            backgroundColor: "#008069",
+            backgroundColor: user?.isDeleted ? "#6c757d" : "#008069",
             color: "#fff",
             display: "flex",
             alignItems: "center",
@@ -47,10 +50,14 @@ const Avatar = ({ user, size = 40, showOnline = false, isOnline = false }) => {
             fontSize: size * 0.4,
           }}
         >
-          {getInitials(name)}
+          {user?.isDeleted ? (
+            <i className="bi bi-person-x" style={{ fontSize: size * 0.5 }}></i>
+          ) : (
+            getInitials(displayName)
+          )}
         </div>
       )}
-      {showOnline && <div style={onlineDotStyle} />}
+      {showOnline && !user?.isDeleted && <div style={onlineDotStyle} />}
     </div>
   );
 };

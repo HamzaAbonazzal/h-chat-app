@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Badge } from "react-bootstrap";
 import Avatar from "../common/Avatar";
-import { formatChatTime, truncate } from "../../utils/formatters";
+import { formatChatTime, truncate, getDisplayName  } from "../../utils/formatters";
 
 const ChatListItem = ({
   conversation,
@@ -18,8 +18,7 @@ const ChatListItem = ({
 
   const displayName = conversation.isGroup
     ? conversation.name
-    : otherUser?.username || "Unknown";
-
+    : getDisplayName(otherUser, t("chat.deletedAccount"));
   const displayUser = conversation.isGroup
     ? { username: conversation.name, avatar: conversation.groupAvatar }
     : otherUser;
@@ -30,8 +29,8 @@ const ChatListItem = ({
   const getSystemMessageText = (msg) => {
     if (!msg?.systemMessage) return "";
     const { action, actor, target } = msg.systemMessage;
-    const actorName = actor?.username || "?";
-    const targetName = target?.username || "?";
+    const actorName = getDisplayName(actor, t("chat.deletedAccount"));
+    const targetName = getDisplayName(target, t("chat.deletedAccount"));
 
     switch (action) {
       case "group_created":

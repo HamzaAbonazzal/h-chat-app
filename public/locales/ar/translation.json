@@ -165,7 +165,8 @@
     "previewImage": "📷 صورة",
     "previewVideo": "🎥 فيديو",
     "previewAudio": "🎤 رسالة صوتية",
-    "previewFile": "📎 ملف"
+    "previewFile": "📎 ملف",
+    "deletedAccount": "حساب محذوف"
   },
   "message": {
     "delivered": "تم التسليم",
@@ -352,5 +353,28 @@
     "EDIT_TIME_EXPIRED": "انتهت مدة تعديل الرسالة",
     "PIN_LIMIT_REACHED": "يمكنك تثبيت 3 محادثات فقط",
     "PIN_MESSAGE_LIMIT_REACHED": "يمكنك تثبيت 3 رسائل كحد أقصى"
+  },
+  "deleteAccount": {
+    "dangerZone": "منطقة الخطر",
+    "title": "حذف الحساب",
+    "description": "سيتم حذف حسابك نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+    "button": "حذف الحساب",
+    "warning": "قبل المتابعة، اعلم أن:",
+    "warning1": "سيتم مسح جميع بياناتك الشخصية",
+    "warning2": "ستُزال من جميع المحادثات والمجموعات",
+    "warning3": "سيفقد الآخرون القدرة على التواصل معك",
+    "warning4": "لا يمكن استرجاع الحساب بعد الحذف",
+    "passwordLabel": "أدخل كلمة المرور للتأكيد",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "reasonLabel": "سبب الحذف",
+    "reasonPlaceholder": "اختر سبباً (اختياري)",
+    "reasonPrivacy": "مخاوف الخصوصية",
+    "reasonNotUseful": "لا أستخدم التطبيق",
+    "reasonEmails": "رسائل بريد كثيرة",
+    "reasonOther": "سبب آخر",
+    "typeLabel": "اكتب",
+    "typeToConfirm": "اكتب {word} للتأكيد",
+    "confirm": "حذف نهائي",
+    "deleting": "جارٍ الحذف..."
   }
 }

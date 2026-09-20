@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { getDisplayName } from "../../utils/formatters";
 
 const SystemMessage = ({ message }) => {
   const { t } = useTranslation();
@@ -7,8 +8,8 @@ const SystemMessage = ({ message }) => {
 
   const { action, actor, target, metadata } = message.systemMessage;
 
-  const actorName = actor?.username || "?";
-  const targetName = target?.username || "?";
+  const actorName = getDisplayName(actor, t("chat.deletedAccount"));
+  const targetName = getDisplayName(target, t("chat.deletedAccount"));
 
   const getText = () => {
     switch (action) {
@@ -76,40 +77,6 @@ const SystemMessage = ({ message }) => {
           <>
             <strong>{actorName}</strong>{" "}
             {t("systemMessages.permissionsChanged")}
-          </>
-        );
-            case "disappearing_changed": {
-        const dur = metadata?.duration || 0;
-        if (dur === 0) {
-          return (
-            <>
-              <strong>{actorName}</strong>{" "}
-              {t("systemMessages.disappearingDisabled")}
-            </>
-          );
-        }
-        const labels = {
-          86400: t("chat.disappearing24h"),
-          604800: t("chat.disappearing7d"),
-          7776000: t("chat.disappearing90d"),
-        };
-        return (
-          <>
-            <strong>{actorName}</strong>{" "}
-            {t("systemMessages.disappearingEnabled")}:{" "}
-            <strong>{labels[dur] || `${dur}s`}</strong>
-          </>
-        );
-      }      case "message_pinned":
-        return (
-          <>
-            <strong>{actorName}</strong> {t("systemMessages.messagePinned")}
-          </>
-        );
-      case "message_unpinned":
-        return (
-          <>
-            <strong>{actorName}</strong> {t("systemMessages.messageUnpinned")}
           </>
         );
       default:

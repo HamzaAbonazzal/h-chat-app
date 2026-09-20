@@ -7,6 +7,7 @@ import {
 } from "react";
 import { authService } from "../services/authService";
 import { storage } from "../utils/storage";
+import { userService } from "../services/userService";
 
 export const AuthContext = createContext(null);
 
@@ -109,6 +110,19 @@ export const AuthProvider = ({ children }) => {
     });
   }, []);
 
+  const deleteAccount = useCallback(async (password, reason = "") => {
+  try {
+    await userService.deleteAccount(password, reason);
+    // ⭐ امسح الحالة وامسح التخزين
+    storage.clear();
+    setUser(null);
+    // ⭐ إعادة التوجيه
+    window.location.href = "/login";
+  } catch (err) {
+    throw err;
+  }
+}, []);
+
   const value = {
     user,
     isAuthenticated: !!user,
@@ -117,6 +131,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    deleteAccount,
     updateUser,
   };
 

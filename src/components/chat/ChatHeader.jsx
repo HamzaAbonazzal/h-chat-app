@@ -9,7 +9,7 @@ import { blockService } from "../../services/blockService";
 import { conversationService } from "../../services/conversationService";
 import Avatar from "../common/Avatar";
 import ConfirmModal from "./ConfirmModal";
-import { formatLastSeen } from "../../utils/formatters";
+import { formatLastSeen, getDisplayName } from "../../utils/formatters";
 
 const ChatHeader = ({
   conversation,
@@ -63,7 +63,7 @@ const ChatHeader = ({
 
   const displayName = conversation.isGroup
     ? conversation.name
-    : otherUser?.username || "Unknown";
+    : getDisplayName(otherUser, t("chat.deletedAccount"));
 
   const displayUser = conversation.isGroup
     ? { username: conversation.name, avatar: conversation.groupAvatar }
@@ -74,10 +74,10 @@ const ChatHeader = ({
   const statusText = conversation.isGroup
     ? `${conversation.participants.length} ${t("chat.members")}`
     : isOnline
-    ? t("common.online")
-    : otherUser?.lastSeen
-    ? formatLastSeen(otherUser.lastSeen, i18n.language)
-    : t("common.offline");
+      ? t("common.online")
+      : otherUser?.lastSeen
+        ? formatLastSeen(otherUser.lastSeen, i18n.language)
+        : t("common.offline");
 
   const handleClickHeader = () => {
     if (conversation.isGroup) {
@@ -172,7 +172,7 @@ const ChatHeader = ({
   return (
     <>
       <div
-        className="d-flex align-items-center gap-3 border-bottom px-3"
+        className="d-flex align-items-center gap-1 gap-sm-2 border-bottom px-2 px-sm-3"
         style={{
           height: "60px",
           backgroundColor: "var(--bs-body-bg)",
@@ -182,10 +182,10 @@ const ChatHeader = ({
         {/* ⭐ زر الرجوع (للشاشات الصغيرة) */}
         <Button
           variant="link"
-          className="d-md-none p-0 text-decoration-none text-secondary"
+          className="d-md-none p-1 text-decoration-none text-secondary flex-shrink-0"
           onClick={onBack}
         >
-          <i className="bi bi-arrow-left fs-4"></i>
+          <i className="bi bi-arrow-left fs-5"></i>
         </Button>
 
         {/* ⭐ الصورة + الاسم */}
@@ -196,32 +196,10 @@ const ChatHeader = ({
           <Avatar user={displayUser} size={42} showOnline isOnline={isOnline} />
           <div className="min-w-0">
             <div
-              className="fw-semibold text-truncate d-flex align-items-center gap-1"
+              className="fw-semibold text-truncate"
               style={{ fontSize: "0.95rem" }}
             >
-              {/* أيقونة الرسائل المؤقتة */}
-              {conversation.disappearingDuration > 0 && (
-                <i
-                  className="bi bi-clock-history flex-shrink-0"
-                  style={{ fontSize: "0.75rem", color: "#25d366" }}
-                  title={t("chat.disappearingMessages")}
-                ></i>
-              )}
-              {/* أيقونة التثبيت */}
-              {conversation.isPinned && (
-                <i
-                  className="bi bi-pin-angle-fill flex-shrink-0"
-                  style={{ fontSize: "0.75rem", color: "#8696a0" }}
-                ></i>
-              )}
-              {/* أيقونة الكتم */}
-              {conversation.isMuted && (
-                <i
-                  className="bi bi-bell-slash-fill flex-shrink-0"
-                  style={{ fontSize: "0.75rem", color: "#8696a0" }}
-                ></i>
-              )}
-              <span className="text-truncate">{displayName}</span>
+              {displayName}
             </div>
             <div
               className="text-truncate"
@@ -230,65 +208,72 @@ const ChatHeader = ({
                 color: isOnline ? "#25d366" : "var(--bs-secondary-color)",
               }}
             >
-              {statusText}
+              {otherUser?.isDeleted ? (
+                <span className="text-muted fst-italic">
+                  <i className="bi bi-person-x me-1"></i>
+                  {t("chat.deletedAccount")}
+                </span>
+              ) : (
+                statusText
+              )}
             </div>
           </div>
         </div>
 
-        {/* ⭐ الأزرار */}
-        <div className="d-flex align-items-center gap-1">
+        {/* ⭐ الأزرار — أحجام متجاوبة للموبايل */}
+        <div className="d-flex align-items-center gap-0 gap-sm-1 flex-shrink-0">
           {/* زر البحث */}
           <Button
             variant="link"
-            className="text-secondary p-2 text-decoration-none"
+            className="text-secondary p-1 p-sm-2 text-decoration-none"
             onClick={onOpenSearch}
             title={t("chat.searchInChat")}
           >
-            <i className="bi bi-search fs-5"></i>
+            <i className="bi bi-search fs-6 fs-sm-5"></i>
           </Button>
 
-          {/* ⭐ أزرار المكالمة الفردية */}
+          {/* ⭐ أزرار المكالمة الفردية — الآن مرئية على الموبايل */}
           {!conversation.isGroup && otherUser && (
             <>
               <Button
                 variant="link"
-                className="text-secondary p-2 text-decoration-none d-none d-sm-inline"
+                className="text-secondary p-1 p-sm-2 text-decoration-none"
                 title={t("call.videoCall")}
                 onClick={handleVideoCall}
                 disabled={blockStatus.iBlockedThem}
               >
-                <i className="bi bi-camera-video fs-5"></i>
+                <i className="bi bi-camera-video fs-6 fs-sm-5"></i>
               </Button>
               <Button
                 variant="link"
-                className="text-secondary p-2 text-decoration-none d-none d-sm-inline"
+                className="text-secondary p-1 p-sm-2 text-decoration-none"
                 title={t("call.voiceCall")}
                 onClick={handleVoiceCall}
                 disabled={blockStatus.iBlockedThem}
               >
-                <i className="bi bi-telephone fs-5"></i>
+                <i className="bi bi-telephone fs-6 fs-sm-5"></i>
               </Button>
             </>
           )}
 
-          {/* ⭐ أزرار المكالمة الجماعية */}
+          {/* ⭐ أزرار المكالمة الجماعية — الآن مرئية على الموبايل */}
           {conversation.isGroup && (
             <>
               <Button
                 variant="link"
-                className="text-secondary p-2 text-decoration-none d-none d-sm-inline"
+                className="text-secondary p-1 p-sm-2 text-decoration-none"
                 title={t("call.groupVideoCall", "مكالمة جماعية مرئية")}
                 onClick={handleGroupVideoCall}
               >
-                <i className="bi bi-camera-video fs-5"></i>
+                <i className="bi bi-camera-video fs-6 fs-sm-5"></i>
               </Button>
               <Button
                 variant="link"
-                className="text-secondary p-2 text-decoration-none d-none d-sm-inline"
+                className="text-secondary p-1 p-sm-2 text-decoration-none"
                 title={t("call.groupCall", "مكالمة جماعية")}
                 onClick={handleGroupVoiceCall}
               >
-                <i className="bi bi-telephone-plus fs-5"></i>
+                <i className="bi bi-telephone-plus fs-6 fs-sm-5"></i>
               </Button>
             </>
           )}
@@ -297,10 +282,10 @@ const ChatHeader = ({
           <Dropdown align="end">
             <Dropdown.Toggle
               as="button"
-              bsPrefix="btn btn-link p-2 text-secondary text-decoration-none"
+              bsPrefix="btn btn-link p-1 p-sm-2 text-secondary text-decoration-none"
               style={{ border: "none" }}
             >
-              <i className="bi bi-three-dots-vertical fs-5"></i>
+              <i className="bi bi-three-dots-vertical fs-6 fs-sm-5"></i>
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {/* معلومات المجموعة */}
@@ -322,6 +307,41 @@ const ChatHeader = ({
               )}
 
               <Dropdown.Divider />
+
+              {/* ⭐ المكالمات أيضاً في القائمة — احتياط للموبايل */}
+              {!conversation.isGroup && otherUser && (
+                <>
+                  <Dropdown.Item
+                    onClick={handleVoiceCall}
+                    disabled={blockStatus.iBlockedThem}
+                  >
+                    <i className="bi bi-telephone me-2"></i>
+                    {t("call.voiceCall")}
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    onClick={handleVideoCall}
+                    disabled={blockStatus.iBlockedThem}
+                  >
+                    <i className="bi bi-camera-video me-2"></i>
+                    {t("call.videoCall")}
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                </>
+              )}
+
+              {conversation.isGroup && (
+                <>
+                  <Dropdown.Item onClick={handleGroupVoiceCall}>
+                    <i className="bi bi-telephone-plus me-2"></i>
+                    {t("call.groupCall", "مكالمة جماعية صوتية")}
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleGroupVideoCall}>
+                    <i className="bi bi-camera-video me-2"></i>
+                    {t("call.groupVideoCall", "مكالمة جماعية مرئية")}
+                  </Dropdown.Item>
+                  <Dropdown.Divider />
+                </>
+              )}
 
               {/* تثبيت */}
               <Dropdown.Item onClick={onTogglePin}>
@@ -436,7 +456,7 @@ const ChatHeader = ({
             show={showBlockModal}
             onHide={() => setShowBlockModal(false)}
             onConfirm={handleBlock}
-            title={`${t("chat.blockUser")} ${otherUser?.username}؟`}
+            title={`${t("chat.blockUser")} ${getDisplayName(otherUser, t("chat.deletedAccount"))}؟`}
             message={t("chat.blockUserConfirm")}
             confirmText={t("chat.blockUser")}
             confirmVariant="danger"
@@ -448,7 +468,7 @@ const ChatHeader = ({
             show={showUnblockModal}
             onHide={() => setShowUnblockModal(false)}
             onConfirm={handleUnblock}
-            title={`${t("chat.unblockUser")} ${otherUser?.username}؟`}
+            title={`${t("chat.unblockUser")} ${getDisplayName(otherUser, t("chat.deletedAccount"))}؟`}
             message={t("chat.unblockUserConfirm")}
             confirmText={t("chat.unblockUser")}
             confirmVariant="success"

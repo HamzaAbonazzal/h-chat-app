@@ -89,9 +89,9 @@ const ChatPage = () => {
       "unreadCountUpdated",
       ({ conversationId: convId, unreadCount }) => {
         setConversations((prev) =>
-          prev.map((c) => (c._id === convId ? { ...c, unreadCount } : c))
+          prev.map((c) => (c._id === convId ? { ...c, unreadCount } : c)),
         );
-      }
+      },
     );
 
     const offLeft = on("conversationLeft", ({ conversationId: convId }) => {
@@ -104,7 +104,7 @@ const ChatPage = () => {
       ({ conversationId: convId }) => {
         setConversations((prev) => prev.filter((c) => c._id !== convId));
         if (conversationId === convId) navigate("/");
-      }
+      },
     );
 
     return () => {
@@ -120,13 +120,13 @@ const ChatPage = () => {
     if (!conversationId) return;
     setConversations((prev) =>
       prev.map((c) =>
-        c._id === conversationId ? { ...c, unreadCount: 0 } : c
-      )
+        c._id === conversationId ? { ...c, unreadCount: 0 } : c,
+      ),
     );
   }, [conversationId]);
 
   const activeConversation = conversations.find(
-    (c) => c._id === conversationId
+    (c) => c._id === conversationId,
   );
 
   const handleSelectConversation = (id) => {
@@ -159,9 +159,17 @@ const ChatPage = () => {
   const handleConversationUpdated = (updatedConv) => {
     setConversations((prev) =>
       prev.map((c) =>
-        c._id === updatedConv._id ? { ...c, ...updatedConv } : c
-      )
+        c._id === updatedConv._id ? { ...c, ...updatedConv } : c,
+      ),
     );
+  };
+
+  // ⭐ بدء مكالمة — استدعِ hook المكالمات
+  const handleStartCall = (targetUser, callType) => {
+    // TODO: ربط مع useWebRTC
+    console.log("Starting call:", targetUser.username, callType);
+    // هنا ستستدعي دالة المكالمة:
+    // initiateCall(targetUser._id, callType);
   };
 
   return (
@@ -274,9 +282,9 @@ const ChatPage = () => {
         </div>
       </div>
 
-            {/* ⭐ Connection Banner */}
+      {/* ⭐ Connection Banner */}
       <ConnectionBanner />
-      
+
       {/* ⭐═══════════ Body ⭐══════════ */}
       <div className="flex-grow-1 overflow-hidden">
         <Row className="h-100 g-0">
@@ -312,6 +320,7 @@ const ChatPage = () => {
               onConversationDeleted={handleConversationDeleted}
               onLeft={handleLeft}
               onConversationUpdated={handleConversationUpdated}
+              onStartCall={handleStartCall} // ⭐ جديد
             />
           </Col>
         </Row>
@@ -340,10 +349,7 @@ const ChatPage = () => {
         onHide={() => setShowGlobalSearch(false)}
       />
 
-      <CallLogModal
-        show={showCallLog}
-        onHide={() => setShowCallLog(false)}
-      />
+      <CallLogModal show={showCallLog} onHide={() => setShowCallLog(false)} />
     </div>
   );
 };

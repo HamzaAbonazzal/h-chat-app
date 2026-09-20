@@ -109,3 +109,12 @@ export const getInitials = (name) => {
   if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
   return (parts[0][0] + parts[1][0]).toUpperCase();
 };
+/**
+ * ⭐ اسم العرض للمستخدم — يعرض "حساب محذوف" إذا كان الحساب محذوفاً.
+ */
+export const getDisplayName = (user, deletedLabel = "Deleted Account") => {
+  if (!user) return deletedLabel;
+  if (user.isDeleted) return deletedLabel;
+  if (!user.username) return deletedLabel;
+  return user.username;
+};

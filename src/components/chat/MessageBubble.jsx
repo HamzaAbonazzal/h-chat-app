@@ -2,12 +2,13 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { Dropdown, Button, Spinner } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { formatMessageTime, formatDuration } from "../../utils/formatters";
+import { formatMessageTime, formatDuration, getDisplayName } from "../../utils/formatters";
 import { useToast } from "../../context/ToastContext";
 import Avatar from "../common/Avatar";
 import MessageReactions from "./MessageReactions";
 import HighlightText from "./HighlightText";
 import LinkPreviewCard from "./LinkPreviewCard";
+
 
 const EDIT_TIME_LIMIT = 15 * 60 * 1000;
 const QUICK_EMOJIS = ["❤️", "👍", "😂", "😮", "😢", "🙏"];
@@ -357,8 +358,7 @@ const MessageBubble = ({
     const replySenderName =
       reply.sender?._id === sender?._id
         ? t("common.you")
-        : reply.sender?.username || "Unknown";
-
+        : getDisplayName(reply.sender, t("chat.deletedAccount"));
     let previewContent = reply.content || "";
     if (reply.isDeleted) previewContent = t("message.deleted");
     else if (reply.type === "image")

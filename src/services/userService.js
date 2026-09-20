@@ -42,4 +42,10 @@ export const userService = {
     const { data } = await api.post("/users/status", { userIds });
     return data.data;
   },
+  deleteAccount: async (password, reason = "") => {
+    const { data } = await api.delete("/users/me", {
+      data: { password, reason },
+    });
+    return data;
+  },
 };

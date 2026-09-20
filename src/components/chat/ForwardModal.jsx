@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../../hooks/useAuth";
 import { conversationService } from "../../services/conversationService";
 import Avatar from "../common/Avatar";
-import { truncate } from "../../utils/formatters";
+import { truncate, getDisplayName } from "../../utils/formatters";
 
 const ForwardModal = ({ show, onHide, message, onConfirm }) => {
   const { t } = useTranslation();
@@ -50,8 +50,7 @@ const ForwardModal = ({ show, onHide, message, onConfirm }) => {
   const getDisplayName = (conv) => {
     if (conv.isGroup) return conv.name;
     const other = conv.participants.find((p) => p._id !== user?._id);
-    return other?.username || "Unknown";
-  };
+  return getDisplayName(other, t("chat.deletedAccount"));  };
 
   const getDisplayUser = (conv) => {
     if (conv.isGroup) {
@@ -61,7 +60,7 @@ const ForwardModal = ({ show, onHide, message, onConfirm }) => {
   };
 
   const filtered = conversations.filter((conv) =>
-    getDisplayName(conv).toLowerCase().includes(search.toLowerCase())
+    getConversationName(conv).toLowerCase().includes(search.toLowerCase())
   );
 
   // معاينة الرسالة
@@ -130,7 +129,7 @@ const ForwardModal = ({ show, onHide, message, onConfirm }) => {
                 <Avatar user={getDisplayUser(conv)} size={44} />
                 <div className="flex-grow-1 min-w-0">
                   <div className="fw-semibold text-truncate">
-                    {getDisplayName(conv)}
+                    {getConversationName(conv)}
                   </div>
                   {conv.isGroup && (
                     <div className="small text-muted">

@@ -5,6 +5,7 @@ import { format, isToday, isYesterday } from "date-fns";
 import { ar, enUS } from "date-fns/locale";
 import { messageService } from "../../services/messageService";
 import Avatar from "../common/Avatar";
+import { getDisplayName } from "../../utils/formatters";
 
 const MessageInfoModal = ({ show, onHide, message }) => {
   const { t, i18n } = useTranslation();
@@ -161,8 +162,9 @@ const MessageInfoModal = ({ show, onHide, message }) => {
                       </Badge>
                     </div>
                     {!info.groupInfo && (
-                      <div className="small text-muted">
-                        {info.deliveredTo.map((u) => u.username).join(", ")}
+                          <div className="small text-muted">
+                            
+                        {info.deliveredTo.map((u) => getDisplayName(u, t("chat.deletedAccount"))).join(", ")}
                       </div>
                     )}
                   </div>

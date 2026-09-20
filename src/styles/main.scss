@@ -49,6 +49,13 @@ body,
   margin: 0;
   padding: 0;
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+
+  // ⭐ منع التمرير الأفقي على الموبايل
+  overflow-x: hidden;
+
+  // ⭐ منع "bounce scroll" على iOS
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -81,11 +88,29 @@ body,
    ⭐ CHAT APP LAYOUT
    ═══════════════════════════════════════════════════════════ */
 
+// ⭐ كلاس خاص بصفحة المحادثة (تمنع التمرير على مستوى الصفحة)
 .chat-app-layout {
+  // ⭐ fallback للمتصفحات القديمة
   height: 100vh;
+
+  // ⭐ الحل الأساسي — dynamic viewport height
+  height: 100dvh;
+
+  // ⭐ fallback لـ iOS Safari < 15.4
+  @supports (-webkit-touch-callout: none) {
+    height: -webkit-fill-available;
+  }
+
+  width: 100%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+
+  // ⭐ دعم iPhone notch
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /* ⭐ TopBar blur effect */
@@ -1125,4 +1150,60 @@ body,
 /* ⭐ في الوضع الداكن */
 [data-bs-theme="dark"] .unread-divider-badge {
   background: linear-gradient(135deg, #00a884, #14c28b);
+}
+
+// ⭐ منع تكبير الشاشة عند الكتابة في input على iOS
+@media screen and (max-width: 768px) {
+
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+// ⭐ ضبط حقل الإدخال أسفل الشاشة
+.message-input-container {
+  // ⭐ يبقى ثابتاً في الأسفل
+  flex-shrink: 0;
+  width: 100%;
+
+  // ⭐ دعم notch أسفل الشاشة (iPhone)
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  background-color: var(--bs-body-bg);
+}
+
+// ⭐ منع الشريط العلوي من تغطية الـ header
+.chat-app-header {
+  flex-shrink: 0;
+  // ⭐ إذا كان المتصفح يعرض شريط العنوان، فهذا يبقي الـ header في مكانه
+  position: relative;
+  z-index: 10;
+}
+
+// ⭐ على الشاشات الصغيرة — نتحكم في المساحة بين العناصر
+@media (max-width: 576px) {
+  .chat-app-layout {
+    // ⭐ لا نستخدم vh هنا — نبقي dvh
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}
+
+// ⭐ أحجام الأيقونات المتجاوبة
+.fs-6 {
+  font-size: 1.1rem !important;
+}
+
+@media (min-width: 576px) {
+  .fs-sm-5 {
+    font-size: 1.25rem !important;
+  }
+}
+
+// ⭐ تقليل الحشو على الموبايل
+@media (max-width: 575.98px) {
+  .chat-header-btn {
+    padding: 0.25rem !important;
+  }
 }
