@@ -170,7 +170,8 @@
     "previewVideo": "🎥 Video",
     "previewAudio": "🎤 Voice message",
     "previewFile": "📎 File",
-    "deletedAccount": "Deleted Account"
+    "deletedAccount": "Deleted Account",
+    "noMessages": "There are no messages yet"
   },
   "message": {
     "delivered": "Delivered",
