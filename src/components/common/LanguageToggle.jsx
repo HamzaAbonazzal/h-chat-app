@@ -4,6 +4,9 @@ import { LANGUAGES } from "../../utils/constants";
 
 /**
  * زر تبديل اللغة — يُستخدم داخل AuthToolbar.
+ * 
+ * ⭐ popperConfig: strategy "fixed" ← يمنع انزياح العناصر المجاورة
+ * عند فتح القائمة.
  */
 const LanguageToggle = () => {
   const { i18n } = useTranslation();
@@ -18,7 +21,28 @@ const LanguageToggle = () => {
   };
 
   return (
-    <Dropdown align="end" className="language-toggle">
+    <Dropdown
+      align="end"
+      className="language-toggle"
+      popperConfig={{
+        strategy: "fixed", // ⭐ المفتاح — يفصل القائمة عن التخطيط
+        modifiers: [
+          {
+            name: "preventOverflow",
+            options: {
+              boundary: "viewport",
+              padding: 8,
+            },
+          },
+          {
+            name: "offset",
+            options: {
+              offset: [0, 8], // مسافة صغيرة أسفل الزر
+            },
+          },
+        ],
+      }}
+    >
       <Dropdown.Toggle
         as="button"
         className="btn language-toggle-btn d-flex align-items-center gap-2 px-3 py-2"
@@ -31,7 +55,7 @@ const LanguageToggle = () => {
         </span>
       </Dropdown.Toggle>
 
-      <Dropdown.Menu>
+      <Dropdown.Menu className="language-dropdown-menu">
         {LANGUAGES.map((lang) => (
           <Dropdown.Item
             key={lang.code}

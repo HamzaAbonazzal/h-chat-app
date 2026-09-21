@@ -1567,34 +1567,53 @@ textarea.form-control.border-0 {
    ⭐ AUTH TOOLBAR — الوضع + اللغة
    ═══════════════════════════════════════════════════════════ */
 
-.auth-toolbar-wrapper {
-  /* ⭐ منع التمرير الأفقي حتى لو حدث تجاوز */
-  overflow-x: hidden;
+.auth-toolbar-container {
+  position: fixed;
+  top: 1rem;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+[dir="rtl"] .auth-toolbar-container {
+  justify-content: flex-start;
 }
 
 .auth-toolbar {
-  /* ⭐ لا يتجاوز عرض الشاشة */
+  display: flex;
+  gap: 0.5rem;
+  pointer-events: auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   max-width: 100%;
-  flex-wrap: nowrap;
-
-  /* ⭐ على الشاشات الضيقة جداً، التفاف */
-  @media (max-width: 360px) {
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
+  /* ⭐ مهم: منع الانزياح */
+  align-items: flex-start;
 }
 
-/* ⭐ الأزرار الموحّدة */
+[dir="rtl"] .auth-toolbar {
+  justify-content: flex-start;
+}
+
+/* ⭐ حاوية كل زر — ثابتة، لا تتأثر بفتح القوائم */
+.auth-toolbar>* {
+  flex-shrink: 0;
+}
+
+/* ⭐ الأزرار */
 .language-toggle-btn,
 .theme-toggle-btn {
   background-color: var(--bs-body-bg) !important;
   border: 1px solid var(--bs-border-color) !important;
   color: var(--bs-body-color) !important;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
   font-size: 0.875rem;
   white-space: nowrap;
-  /* ⭐ لا تنمو أكثر من اللازم */
-  min-width: 0;
   flex-shrink: 0;
 
   &:hover,
@@ -1607,11 +1626,57 @@ textarea.form-control.border-0 {
 
   i {
     font-size: 1rem;
-    flex-shrink: 0;
   }
 
   &::after {
     display: none !important;
+  }
+}
+
+/* ⭐ قائمة اللغة — منفصلة تماماً عن التخطيط */
+.language-dropdown-menu {
+  /* ⭐ عالية جداً حتى لا تختفي خلف أي شيء */
+  z-index: 99999 !important;
+
+  /* ⭐ لا تؤثر على العناصر المجاورة */
+  position: fixed !important;
+
+  /* ⭐ حدود أنيقة */
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+  padding: 6px !important;
+  min-width: 160px;
+
+  /* ⭐ دخول سلس */
+  animation: langDropdownIn 0.15s ease-out;
+
+  .dropdown-item {
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--bs-tertiary-bg);
+    }
+
+    &.active {
+      background-color: #008069 !important;
+      color: #fff !important;
+    }
+  }
+}
+
+@keyframes langDropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -1631,33 +1696,23 @@ textarea.form-control.border-0 {
       color: #00a884 !important;
     }
   }
+
+  .language-dropdown-menu {
+    background-color: #1f2c34;
+    border: 1px solid #2a3942 !important;
+  }
 }
 
-/* ⭐ الموبايل — زرّان بأيقونات فقط */
+/* ⭐ الموبايل */
 @media (max-width: 575.98px) {
-  .auth-toolbar {
-    gap: 0.5rem !important;
-  }
 
   .language-toggle-btn,
   .theme-toggle-btn {
-    padding: 0.5rem 0.65rem !important;
+    padding: 0.45rem 0.6rem !important;
     font-size: 0.85rem !important;
 
     i {
       font-size: 1.05rem;
     }
-  }
-}
-
-/* ⭐ الشاشات الصغيرة جداً — تصغير أكثر */
-@media (max-width: 360px) {
-  .auth-toolbar-wrapper {
-    padding-inline: 0.5rem !important;
-  }
-
-  .language-toggle-btn,
-  .theme-toggle-btn {
-    padding: 0.4rem 0.55rem !important;
   }
 }
