@@ -171,7 +171,8 @@
     "previewAudio": "🎤 رسالة صوتية",
     "previewFile": "📎 ملف",
     "deletedAccount": "حساب محذوف",
-    "searchUsersPlaceholder": "ابحث عن مستخدم..."
+    "searchUsersPlaceholder": "ابحث عن مستخدم...",
+    "noMessages": "لا يوجد رسائل بعد"
   },
   "message": {
     "delivered": "تم التسليم",
