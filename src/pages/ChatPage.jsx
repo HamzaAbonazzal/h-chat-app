@@ -185,12 +185,12 @@ const ChatPage = () => {
       >
         {/* ⭐ بيانات المستخدم */}
         <div className="d-flex align-items-center gap-3">
-          <Avatar user={user} size={42} showOnline isOnline={isConnected} />
+          {/* <Avatar user={user} size={42} showOnline isOnline={isConnected} /> */}
           <div className="d-none d-sm-block">
-            <div className="fw-bold small" style={{ fontSize: "0.95rem" }}>
-              {user?.username}
+            <div className="fw-bold small" style={{ fontSize: "1.2rem" }}>
+              H Chat App
             </div>
-            <div
+            {/* <div
               className="small d-flex align-items-center gap-1"
               style={{
                 color: isConnected ? "#25d366" : "var(--bs-secondary-color)",
@@ -210,7 +210,7 @@ const ChatPage = () => {
                 ></span>
               )}
               {isConnected ? t("common.online") : t("common.offline")}
-            </div>
+            </div> */}
           </div>
         </div>
 

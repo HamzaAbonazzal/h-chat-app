@@ -87,9 +87,9 @@ const AuthLayout = ({ title, subtitle, children, footerLink }) => {
           {/* ⭐ حقوق النشر */}
           <p
             className="text-center text-muted mb-0 mt-3"
-            style={{ fontSize: "0.75rem" }}
+            style={{ fontSize: "0.75rem", direction: "ltr" }}
           >
-            © {new Date().getFullYear()} {t("common.appName")}
+            © {new Date().getFullYear()} H Chat App
           </p>
         </Container>
       </div>
