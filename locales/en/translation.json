@@ -38,7 +38,11 @@
     "haveAccount": "Already have an account?",
     "forgotPassword": "Forgot password?",
     "loginSuccess": "Logged in successfully",
-    "registerSuccess": "Account created successfully"
+    "registerSuccess": "Account created successfully",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "usernamePlaceholder": "Choose a username",
+    "confirmPasswordPlaceholder": "Re-enter your password"
   },
   "chat": {
     "chats": "Chats",
@@ -287,7 +291,35 @@
     "editProfile": "Edit Profile",
     "bio": "Bio",
     "avatar": "Profile Picture",
-    "chooseAvatar": "Choose a photo"
+    "chooseAvatar": "Choose a photo",
+    "bioPlaceholder": "Tell us about yourself...",
+    "currentPasswordPlaceholder": "Enter current password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmNewPasswordPlaceholder": "Re-enter new password",
+    "sureLogout": "Are you sure you want to logout?",
+    "deleteAccount": {
+      "dangerZone": "Danger Zone",
+      "title": "Delete Account",
+      "description": "Your account will be permanently deleted. This action cannot be undone.",
+      "button": "Delete Account",
+      "warning": "Before you continue, note that:",
+      "warning1": "All your personal data will be erased",
+      "warning2": "You will be removed from all conversations and groups",
+      "warning3": "Others won't be able to contact you",
+      "warning4": "Your account cannot be recovered",
+      "passwordLabel": "Enter your password to confirm",
+      "passwordRequired": "Password is required",
+      "reasonLabel": "Reason for deletion",
+      "reasonPlaceholder": "Choose a reason (optional)",
+      "reasonPrivacy": "Privacy concerns",
+      "reasonNotUseful": "Not using the app anymore",
+      "reasonEmails": "Too many emails",
+      "reasonOther": "Other",
+      "typeLabel": "Type",
+      "typeToConfirm": "Type {word} to confirm",
+      "confirm": "Delete Forever",
+      "deleting": "Deleting..."
+    }
   },
   "systemMessages": {
     "groupCreated": "created the group",
@@ -353,28 +385,5 @@
     "EDIT_TIME_EXPIRED": "Time limit for editing has expired",
     "PIN_LIMIT_REACHED": "You can pin up to 3 chats only",
     "PIN_MESSAGE_LIMIT_REACHED": "You can pin up to 3 messages only"
-  },
-  "deleteAccount": {
-    "dangerZone": "Danger Zone",
-    "title": "Delete Account",
-    "description": "Your account will be permanently deleted. This action cannot be undone.",
-    "button": "Delete Account",
-    "warning": "Before you continue, note that:",
-    "warning1": "All your personal data will be erased",
-    "warning2": "You will be removed from all conversations and groups",
-    "warning3": "Others won't be able to contact you",
-    "warning4": "Your account cannot be recovered",
-    "passwordLabel": "Enter your password to confirm",
-    "passwordRequired": "Password is required",
-    "reasonLabel": "Reason for deletion",
-    "reasonPlaceholder": "Choose a reason (optional)",
-    "reasonPrivacy": "Privacy concerns",
-    "reasonNotUseful": "Not using the app anymore",
-    "reasonEmails": "Too many emails",
-    "reasonOther": "Other",
-    "typeLabel": "Type",
-    "typeToConfirm": "Type {word} to confirm",
-    "confirm": "Delete Forever",
-    "deleting": "Deleting..."
   }
 }

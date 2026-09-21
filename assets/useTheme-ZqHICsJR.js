@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-hePW80VL.js";import{D as t}from"./prop-types-DsuK4X55.js";import{b as n}from"./index-DBsZeUhv.js";var r=e(t(),1),i=()=>{let e=(0,r.useContext)(n);if(!e)throw Error(`useTheme must be used within ThemeProvider`);return e};export{i as t};
