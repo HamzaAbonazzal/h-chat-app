@@ -1668,18 +1668,6 @@ textarea.form-control.border-0 {
   }
 }
 
-@keyframes langDropdownIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.96);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 /* ⭐ الوضع الداكن */
 [data-bs-theme="dark"] {
 
@@ -1697,10 +1685,47 @@ textarea.form-control.border-0 {
     }
   }
 
-  .language-dropdown-menu {
-    background-color: #1f2c34;
-    border: 1px solid #2a3942 !important;
+/* ⭐ قائمة اللغة — منفصلة تماماً عن التخطيط */
+.language-dropdown-menu {
+  z-index: 99999 !important;
+  position: fixed !important;
+
+  border: none !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+  padding: 6px !important;
+  min-width: 160px;
+
+  /* ⭐ ظهور ناعم — opacity فقط، بدون transform */
+  animation: langDropdownFadeIn 0.12s ease-out;
+
+  .dropdown-item {
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: var(--bs-tertiary-bg);
+    }
+
+    &.active {
+      background-color: #008069 !important;
+      color: #fff !important;
+    }
   }
+}
+
+/* ⭐ fade فقط — لا حركة */
+@keyframes langDropdownFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
 }
 
 /* ⭐ الموبايل */
