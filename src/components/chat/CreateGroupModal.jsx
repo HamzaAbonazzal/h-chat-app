@@ -103,13 +103,13 @@ const CreateGroupModal = ({ show, onHide, onGroupCreated }) => {
             )}
 
             <Form.Control
-              type="text"
-              placeholder={t("common.search")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="mb-3"
-              autoFocus
-            />
+  type="text"
+  placeholder={t("chat.searchUsersPlaceholder")}
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  className="mb-3"
+  autoFocus
+/>
 
             {loading ? (
               <div className="text-center py-4">

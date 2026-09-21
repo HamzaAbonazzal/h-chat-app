@@ -62,7 +62,7 @@ const GroupInfoModal = ({
       setLoading(true);
       try {
         const data = await conversationService.getConversationById(
-          initialConversation._id
+          initialConversation._id,
         );
         setConversation(data);
         setNewName(data.name);
@@ -85,7 +85,7 @@ const GroupInfoModal = ({
         const data = await userService.searchUsers(searchQuery);
         // استثنِ الأعضاء الحاليين
         const memberIds = new Set(
-          conversation?.participants?.map((p) => p._id) || []
+          conversation?.participants?.map((p) => p._id) || [],
         );
         setSearchUsers(data.filter((u) => !memberIds.has(u._id)));
       } catch (err) {
@@ -102,20 +102,15 @@ const GroupInfoModal = ({
   if (!conversation) return null;
 
   const myId = user._id;
-  const isOwner = conversation.owner?._id === myId || conversation.owner === myId;
-  const isAdmin = conversation.admins?.some(
-    (a) => (a._id || a) === myId
-  );
+  const isOwner =
+    conversation.owner?._id === myId || conversation.owner === myId;
+  const isAdmin = conversation.admins?.some((a) => (a._id || a) === myId);
 
   const canAddMembers =
-    isOwner ||
-    isAdmin ||
-    conversation.permissions?.addMembers === "all";
+    isOwner || isAdmin || conversation.permissions?.addMembers === "all";
 
   const canEditInfo =
-    isOwner ||
-    isAdmin ||
-    conversation.permissions?.editGroupInfo === "all";
+    isOwner || isAdmin || conversation.permissions?.editGroupInfo === "all";
 
   // ⭐ تعديل الاسم
   const handleSaveName = async () => {
@@ -171,7 +166,7 @@ const GroupInfoModal = ({
           await conversationService.promoteToAdmin(conversation._id, userId);
           // أعد الجلب
           const data = await conversationService.getConversationById(
-            conversation._id
+            conversation._id,
           );
           setConversation(data);
           onConversationUpdated?.(data);
@@ -193,7 +188,7 @@ const GroupInfoModal = ({
         try {
           await conversationService.demoteFromAdmin(conversation._id, userId);
           const data = await conversationService.getConversationById(
-            conversation._id
+            conversation._id,
           );
           setConversation(data);
           onConversationUpdated?.(data);
@@ -213,12 +208,9 @@ const GroupInfoModal = ({
       variant: "danger",
       action: async () => {
         try {
-          await conversationService.removeParticipant(
-            conversation._id,
-            userId
-          );
+          await conversationService.removeParticipant(conversation._id, userId);
           const data = await conversationService.getConversationById(
-            conversation._id
+            conversation._id,
           );
           setConversation(data);
           onConversationUpdated?.(data);
@@ -234,7 +226,7 @@ const GroupInfoModal = ({
     try {
       await conversationService.addParticipant(conversation._id, userId);
       const data = await conversationService.getConversationById(
-        conversation._id
+        conversation._id,
       );
       setConversation(data);
       onConversationUpdated?.(data);
@@ -289,7 +281,7 @@ const GroupInfoModal = ({
     try {
       const updated = await conversationService.updatePermissions(
         conversation._id,
-        { [key]: value }
+        { [key]: value },
       );
       setConversation((prev) => ({
         ...prev,
@@ -341,9 +333,7 @@ const GroupInfoModal = ({
                           right: 0,
                         }}
                         onClick={() =>
-                          document
-                            .getElementById("group-avatar-input")
-                            ?.click()
+                          document.getElementById("group-avatar-input")?.click()
                         }
                         disabled={saving}
                       >
@@ -365,11 +355,15 @@ const GroupInfoModal = ({
                 </div>
 
                 {editingName ? (
-                  <div className="d-flex gap-2 mt-3 mx-auto" style={{ maxWidth: "400px" }}>
+                  <div
+                    className="d-flex gap-2 mt-3 mx-auto"
+                    style={{ maxWidth: "400px" }}
+                  >
                     <Form.Control
                       type="text"
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
+                      placeholder={t("chat.groupNamePlaceholder")}
                       autoFocus
                       maxLength={50}
                     />
@@ -459,7 +453,7 @@ const GroupInfoModal = ({
                       <Form.Control
                         type="text"
                         size="sm"
-                        placeholder={t("common.search")}
+                        placeholder={t("chat.searchUsersPlaceholder")}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         autoFocus
@@ -501,7 +495,7 @@ const GroupInfoModal = ({
                         conversation.owner?._id === p._id ||
                         conversation.owner === p._id;
                       const isUserAdmin = conversation.admins?.some(
-                        (a) => (a._id || a) === p._id
+                        (a) => (a._id || a) === p._id,
                       );
 
                       return (
@@ -539,7 +533,11 @@ const GroupInfoModal = ({
                             </div>
                             <div className="small text-muted">
                               {isUserOwner && (
-                                <Badge bg="warning" text="dark" className="me-1">
+                                <Badge
+                                  bg="warning"
+                                  text="dark"
+                                  className="me-1"
+                                >
                                   {t("chat.owner")}
                                 </Badge>
                               )}
@@ -578,8 +576,7 @@ const GroupInfoModal = ({
                                     {t("chat.demoteAdmin")}
                                   </Dropdown.Item>
                                 )}
-                                {(isOwner ||
-                                  (isAdmin && !isUserAdmin)) && (
+                                {(isOwner || (isAdmin && !isUserAdmin)) && (
                                   <Dropdown.Item
                                     className="text-danger"
                                     onClick={() => handleRemove(p._id)}
@@ -619,9 +616,7 @@ const GroupInfoModal = ({
                       disabled={saving}
                     >
                       <option value="all">{t("chat.allMembers")}</option>
-                      <option value="admins">
-                        {t("chat.adminsOnly")}
-                      </option>
+                      <option value="admins">{t("chat.adminsOnly")}</option>
                     </Form.Select>
                   </Form.Group>
 
@@ -638,9 +633,7 @@ const GroupInfoModal = ({
                       disabled={saving}
                     >
                       <option value="all">{t("chat.allMembers")}</option>
-                      <option value="admins">
-                        {t("chat.adminsOnly")}
-                      </option>
+                      <option value="admins">{t("chat.adminsOnly")}</option>
                     </Form.Select>
                   </Form.Group>
 
@@ -652,17 +645,12 @@ const GroupInfoModal = ({
                     <Form.Select
                       value={conversation.permissions?.editGroupInfo || "all"}
                       onChange={(e) =>
-                        handlePermissionChange(
-                          "editGroupInfo",
-                          e.target.value
-                        )
+                        handlePermissionChange("editGroupInfo", e.target.value)
                       }
                       disabled={saving}
                     >
                       <option value="all">{t("chat.allMembers")}</option>
-                      <option value="admins">
-                        {t("chat.adminsOnly")}
-                      </option>
+                      <option value="admins">{t("chat.adminsOnly")}</option>
                     </Form.Select>
                   </Form.Group>
                 </>

@@ -31,15 +31,18 @@ const SettingsPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleLogout = async () => {
-    setLoggingOut(true);
-    try {
-      await logout();
-      navigate("/login", { replace: true });
-    } finally {
-      setLoggingOut(false);
-      setShowLogoutModal(false);
-    }
-  };
+  setLoggingOut(true);
+  try {
+    await logout();
+    // ⭐ AuthContext يعيد التوجيه — لكن نضيف احتياطاً
+    navigate("/login", { replace: true });
+  } catch (err) {
+    console.error("Logout error:", err);
+  } finally {
+    setLoggingOut(false);
+    setShowLogoutModal(false);
+  }
+};
 
   const tabs = [
     { key: "general", icon: "bi-gear", label: t("settings.general") },
@@ -224,7 +227,7 @@ const SettingsPage = () => {
             {t("settings.logout")}
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body>Are you sure you want to logout?</Modal.Body>
+        <Modal.Body>{t("settings.sureLogout")}</Modal.Body>
         <Modal.Footer>
           <Button
             variant="secondary"

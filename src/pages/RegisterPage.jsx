@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Form, Button, Alert, InputGroup } from "react-bootstrap";
+import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../hooks/useAuth";
 import { validators } from "../utils/validators";
 import AuthLayout from "../components/common/AuthLayout";
+import InputField from "../components/common/InputField";
 
 const RegisterPage = () => {
   const { t } = useTranslation();
@@ -70,6 +71,18 @@ const RegisterPage = () => {
     }
   };
 
+  const passwordAdornment = (
+    <Button
+      variant="link"
+      type="button"
+      onClick={() => setShowPassword((p) => !p)}
+      disabled={loading}
+      title={showPassword ? t("common.hide") : t("common.show")}
+    >
+      <i className={`bi bi-eye${showPassword ? "-slash" : ""}`}></i>
+    </Button>
+  );
+
   return (
     <AuthLayout
       title={t("auth.registerTitle")}
@@ -88,124 +101,73 @@ const RegisterPage = () => {
       )}
 
       <Form onSubmit={handleSubmit} noValidate>
-        {/* اسم المستخدم */}
-        <Form.Group className="mb-3">
-          <Form.Label className="small fw-semibold">
-            {t("auth.username")}
-          </Form.Label>
-          <InputGroup>
-            <InputGroup.Text className="bg-transparent">
-              <i className="bi bi-person"></i>
-            </InputGroup.Text>
-            <Form.Control
-              type="text"
-              name="username"
-              placeholder="ahmed_123"
-              value={formData.username}
-              onChange={handleChange}
-              isInvalid={!!errors.username}
-              autoComplete="username"
-              autoFocus
-              disabled={loading}
-            />
-          </InputGroup>
-          {errors.username && (
-            <div className="text-danger small mt-1">{errors.username}</div>
-          )}
-        </Form.Group>
+        {/* ⭐ اسم المستخدم */}
+        <InputField
+          type="text"
+          name="username"
+          label={t("auth.username")}
+          value={formData.username}
+          onChange={handleChange}
+          placeholder={t("auth.usernamePlaceholder")}
+          icon="bi-person"
+          error={errors.username}
+          autoComplete="username"
+          autoFocus
+          disabled={loading}
+        />
 
-        {/* البريد */}
-        <Form.Group className="mb-3">
-          <Form.Label className="small fw-semibold">
-            {t("auth.email")}
-          </Form.Label>
-          <InputGroup>
-            <InputGroup.Text className="bg-transparent">
-              <i className="bi bi-envelope"></i>
-            </InputGroup.Text>
-            <Form.Control
-              type="email"
-              name="email"
-              placeholder="you@example.com"
-              value={formData.email}
-              onChange={handleChange}
-              isInvalid={!!errors.email}
-              autoComplete="email"
-              disabled={loading}
-            />
-          </InputGroup>
-          {errors.email && (
-            <div className="text-danger small mt-1">{errors.email}</div>
-          )}
-        </Form.Group>
+        {/* ⭐ البريد */}
+        <InputField
+          type="email"
+          name="email"
+          label={t("auth.email")}
+          value={formData.email}
+          onChange={handleChange}
+          placeholder={t("auth.emailPlaceholder")}
+          icon="bi-envelope"
+          error={errors.email}
+          autoComplete="email"
+          disabled={loading}
+        />
 
-        {/* كلمة المرور */}
-        <Form.Group className="mb-3">
-          <Form.Label className="small fw-semibold">
-            {t("auth.password")}
-          </Form.Label>
-          <InputGroup>
-            <InputGroup.Text className="bg-transparent">
-              <i className="bi bi-lock"></i>
-            </InputGroup.Text>
-            <Form.Control
-              type={showPassword ? "text" : "password"}
-              name="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              isInvalid={!!errors.password}
-              autoComplete="new-password"
-              disabled={loading}
-            />
-            <Button
-              variant="outline-secondary"
-              type="button"
-              onClick={() => setShowPassword((p) => !p)}
-              disabled={loading}
-            >
-              <i
-                className={`bi bi-eye${showPassword ? "-slash" : ""}`}
-              ></i>
-            </Button>
-          </InputGroup>
-          {errors.password && (
-            <div className="text-danger small mt-1">{errors.password}</div>
-          )}
-        </Form.Group>
+        {/* ⭐ كلمة المرور */}
+        <InputField
+          type={showPassword ? "text" : "password"}
+          name="password"
+          label={t("auth.password")}
+          value={formData.password}
+          onChange={handleChange}
+          placeholder={t("auth.passwordPlaceholder")}
+          icon="bi-lock"
+          error={errors.password}
+          autoComplete="new-password"
+          disabled={loading}
+          endAdornment={passwordAdornment}
+        />
 
-        {/* تأكيد كلمة المرور */}
-        <Form.Group className="mb-3">
-          <Form.Label className="small fw-semibold">
-            {t("auth.confirmPassword")}
-          </Form.Label>
-          <InputGroup>
-            <InputGroup.Text className="bg-transparent">
-              <i className="bi bi-lock-fill"></i>
-            </InputGroup.Text>
-            <Form.Control
-              type={showPassword ? "text" : "password"}
-              name="confirmPassword"
-              placeholder="••••••••"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              isInvalid={!!errors.confirmPassword}
-              autoComplete="new-password"
-              disabled={loading}
-            />
-          </InputGroup>
-          {errors.confirmPassword && (
-            <div className="text-danger small mt-1">
-              {errors.confirmPassword}
-            </div>
-          )}
-        </Form.Group>
+        {/* ⭐ تأكيد كلمة المرور */}
+        <InputField
+          type={showPassword ? "text" : "password"}
+          name="confirmPassword"
+          label={t("auth.confirmPassword")}
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          placeholder={t("auth.confirmPasswordPlaceholder")}
+          icon="bi-lock-fill"
+          error={errors.confirmPassword}
+          autoComplete="new-password"
+          disabled={loading}
+        />
 
-        {/* زر التسجيل */}
+        {/* ⭐ زر التسجيل */}
         <Button
           type="submit"
-          className="w-100 fw-semibold py-2"
-          style={{ backgroundColor: "#008069", borderColor: "#008069" }}
+          className="w-100 fw-semibold py-2 mt-2"
+          style={{
+            backgroundColor: "#008069",
+            borderColor: "#008069",
+            borderRadius: "10px",
+          }}
           disabled={loading}
         >
           {loading ? (

@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
-import { Form, Button, Alert, InputGroup } from "react-bootstrap";
+import { useState } from "react";
+import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../hooks/useAuth";
 import { validators } from "../utils/validators";
 import AuthLayout from "../components/common/AuthLayout";
+import InputField from "../components/common/InputField";
 
 const LoginPage = () => {
   const { t } = useTranslation();
@@ -17,7 +18,6 @@ const LoginPage = () => {
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // إذا سجل دخوله مسبقاً، انتقل للصفحة الرئيسية
   if (!authLoading && isAuthenticated) {
     return <Navigate to="/" replace />;
   }
@@ -76,72 +76,57 @@ const LoginPage = () => {
       )}
 
       <Form onSubmit={handleSubmit} noValidate>
-        {/* البريد الإلكتروني */}
-        <Form.Group className="mb-3">
-          <Form.Label className="small fw-semibold">
-            {t("auth.email")}
-          </Form.Label>
-          <InputGroup>
-            <InputGroup.Text className="bg-transparent">
-              <i className="bi bi-envelope"></i>
-            </InputGroup.Text>
-            <Form.Control
-              type="email"
-              name="email"
-              placeholder="you@example.com"
-              value={formData.email}
-              onChange={handleChange}
-              isInvalid={!!errors.email}
-              autoComplete="email"
-              autoFocus
-              disabled={loading}
-            />
-          </InputGroup>
-          {errors.email && (
-            <div className="text-danger small mt-1">{errors.email}</div>
-          )}
-        </Form.Group>
+        {/* ⭐ البريد */}
+        <InputField
+          type="email"
+          name="email"
+          label={t("auth.email")}
+          value={formData.email}
+          onChange={handleChange}
+          placeholder={t("auth.emailPlaceholder")}
+          icon="bi-envelope"
+          error={errors.email}
+          autoComplete="email"
+          autoFocus
+          disabled={loading}
+        />
 
-        {/* كلمة المرور */}
-        <Form.Group className="mb-3">
-          <Form.Label className="small fw-semibold">
-            {t("auth.password")}
-          </Form.Label>
-          <InputGroup>
-            <InputGroup.Text className="bg-transparent">
-              <i className="bi bi-lock"></i>
-            </InputGroup.Text>
-            <Form.Control
-              type={showPassword ? "text" : "password"}
-              name="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              isInvalid={!!errors.password}
-              autoComplete="current-password"
-              disabled={loading}
-            />
+        {/* ⭐ كلمة المرور */}
+        <InputField
+          type={showPassword ? "text" : "password"}
+          name="password"
+          label={t("auth.password")}
+          value={formData.password}
+          onChange={handleChange}
+          placeholder={t("auth.passwordPlaceholder")}
+          icon="bi-lock"
+          error={errors.password}
+          autoComplete="current-password"
+          disabled={loading}
+          endAdornment={
             <Button
-              variant="outline-secondary"
+              variant="link"
               type="button"
               onClick={() => setShowPassword((p) => !p)}
               disabled={loading}
+              title={showPassword ? t("common.hide") : t("common.show")}
             >
               <i
                 className={`bi bi-eye${showPassword ? "-slash" : ""}`}
               ></i>
             </Button>
-          </InputGroup>
-          {errors.password && (
-            <div className="text-danger small mt-1">{errors.password}</div>
-          )}
-        </Form.Group>
+          }
+        />
 
-        {/* زر الدخول */}
+        {/* ⭐ زر الدخول */}
         <Button
           type="submit"
-          className="w-100 fw-semibold py-2"
-          style={{ backgroundColor: "#008069", borderColor: "#008069" }}
+          className="w-100 fw-semibold py-2 mt-2"
+          style={{
+            backgroundColor: "#008069",
+            borderColor: "#008069",
+            borderRadius: "10px",
+          }}
           disabled={loading}
         >
           {loading ? (

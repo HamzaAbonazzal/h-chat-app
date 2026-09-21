@@ -38,9 +38,8 @@ const NewChatModal = ({ show, onHide, onConversationCreated }) => {
   const handleSelectUser = async (userId) => {
     setCreating(userId);
     try {
-      const conversation = await conversationService.createOrGetConversation(
-        userId
-      );
+      const conversation =
+        await conversationService.createOrGetConversation(userId);
       onConversationCreated?.(conversation);
       onHide();
     } catch (err) {
@@ -53,15 +52,13 @@ const NewChatModal = ({ show, onHide, onConversationCreated }) => {
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title className="fs-6 fw-bold">
-          {t("chat.newChat")}
-        </Modal.Title>
+        <Modal.Title className="fs-6 fw-bold">{t("chat.newChat")}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
         <Form.Control
           type="text"
-          placeholder={t("common.search")}
+          placeholder={t("chat.searchUsersPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           autoFocus
@@ -77,7 +74,10 @@ const NewChatModal = ({ show, onHide, onConversationCreated }) => {
             {search ? "No users found" : "Start typing to search"}
           </div>
         ) : (
-          <ListGroup variant="flush" style={{ maxHeight: "400px", overflowY: "auto" }}>
+          <ListGroup
+            variant="flush"
+            style={{ maxHeight: "400px", overflowY: "auto" }}
+          >
             {users.map((u) => (
               <ListGroup.Item
                 key={u._id}

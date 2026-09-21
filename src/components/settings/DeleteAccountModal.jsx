@@ -92,31 +92,9 @@ const DeleteAccountModal = ({ show, onHide, onConfirm }) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              disabled={loading}
+              placeholder={t("auth.passwordPlaceholder")}              disabled={loading}
               autoComplete="current-password"
             />
-          </Form.Group>
-
-          {/* ⭐ السبب (اختياري) */}
-          <Form.Group className="mb-3">
-            <Form.Label className="small fw-semibold">
-              {t("settings.deleteAccount.reasonLabel")}{" "}
-              <span className="text-muted fw-normal">
-                ({t("common.optional")})
-              </span>
-            </Form.Label>
-            <Form.Select
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              disabled={loading}
-            >
-              <option value="">{t("settings.deleteAccount.reasonPlaceholder")}</option>
-              <option value="privacy">{t("settings.deleteAccount.reasonPrivacy")}</option>
-              <option value="not_useful">{t("settings.deleteAccount.reasonNotUseful")}</option>
-              <option value="too_many_emails">{t("settings.deleteAccount.reasonEmails")}</option>
-              <option value="other">{t("settings.deleteAccount.reasonOther")}</option>
-            </Form.Select>
           </Form.Group>
 
           {/* ⭐ التأكيد بالكتابة */}

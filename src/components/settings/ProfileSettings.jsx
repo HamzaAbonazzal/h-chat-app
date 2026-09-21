@@ -78,10 +78,7 @@ const ProfileSettings = () => {
       {/* الصورة الرمزية */}
       <div className="text-center mb-4">
         <div className="position-relative d-inline-block">
-          <Avatar
-            user={{ ...user, avatar: formData.avatar }}
-            size={100}
-          />
+          <Avatar user={{ ...user, avatar: formData.avatar }} size={100} />
           <Button
             variant="success"
             size="sm"
@@ -137,15 +134,14 @@ const ProfileSettings = () => {
           name="username"
           value={formData.username}
           onChange={handleChange}
+          placeholder={t("auth.usernamePlaceholder")}
           disabled={saving}
         />
       </Form.Group>
 
       {/* البريد (قراءة فقط) */}
       <Form.Group className="mb-3">
-        <Form.Label className="small fw-semibold">
-          {t("auth.email")}
-        </Form.Label>
+        <Form.Label className="small fw-semibold">{t("auth.email")}</Form.Label>
         <Form.Control type="email" value={user?.email || ""} disabled />
         <Form.Text className="text-muted small">
           Email cannot be changed
@@ -165,7 +161,7 @@ const ProfileSettings = () => {
           onChange={handleChange}
           maxLength={150}
           disabled={saving}
-          placeholder="Hey there! I am using this app."
+          placeholder={t("settings.bioPlaceholder")}
         />
         <Form.Text className="text-muted small">
           {formData.bio.length}/150

@@ -6,8 +6,8 @@ import {
   useRef,
 } from "react";
 import { authService } from "../services/authService";
-import { storage } from "../utils/storage";
 import { userService } from "../services/userService";
+import { storage } from "../utils/storage";
 
 export const AuthContext = createContext(null);
 
@@ -36,7 +36,6 @@ export const AuthProvider = ({ children }) => {
           storage.setUser(freshUser);
         }
       } catch (err) {
-        // التوكن منتهي أو غير صالح
         if (isMounted.current) {
           storage.clear();
           setUser(null);
@@ -53,6 +52,14 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
+  // ⭐ دالة مساعدة لإعادة التوجيه — تدعم HashRouter + GitHub Pages
+  const redirectToLogin = useCallback(() => {
+    // ⭐ HashRouter يستخدم hash بدل path
+    if (typeof window !== "undefined") {
+      window.location.hash = "#/login";
+    }
+  }, []);
+
   // ⭐ تسجيل الدخول
   const login = useCallback(async (email, password) => {
     setError(null);
@@ -64,8 +71,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       return data;
     } catch (err) {
-      const message =
-        err.response?.data?.message || "Login failed";
+      const message = err.response?.data?.message || "Login failed";
       setError(message);
       throw new Error(message);
     }
@@ -82,8 +88,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
       return data;
     } catch (err) {
-      const message =
-        err.response?.data?.message || "Registration failed";
+      const message = err.response?.data?.message || "Registration failed";
       setError(message);
       throw new Error(message);
     }
@@ -98,10 +103,29 @@ export const AuthProvider = ({ children }) => {
     } finally {
       storage.clear();
       setUser(null);
+      // ⭐ التوجيه يتم تلقائياً عبر ProtectedRoute
+      // لكن نضيفه هنا للأمان (لو لم يكن ProtectedRoute موجوداً)
+      redirectToLogin();
     }
-  }, []);
+  }, [redirectToLogin]);
 
-  // ⭐ تحديث بيانات المستخدم (بعد تعديل الملف الشخصي)
+  // ⭐ حذف الحساب
+  const deleteAccount = useCallback(
+    async (password, reason = "") => {
+      try {
+        await userService.deleteAccount(password, reason);
+        storage.clear();
+        setUser(null);
+        // ⭐ التوجيه لصفحة تسجيل الدخول
+        redirectToLogin();
+      } catch (err) {
+        throw err;
+      }
+    },
+    [redirectToLogin],
+  );
+
+  // ⭐ تحديث بيانات المستخدم
   const updateUser = useCallback((updates) => {
     setUser((prev) => {
       const updated = { ...prev, ...updates };
@@ -109,19 +133,6 @@ export const AuthProvider = ({ children }) => {
       return updated;
     });
   }, []);
-
-  const deleteAccount = useCallback(async (password, reason = "") => {
-  try {
-    await userService.deleteAccount(password, reason);
-    // ⭐ امسح الحالة وامسح التخزين
-    storage.clear();
-    setUser(null);
-    // ⭐ إعادة التوجيه
-    window.location.href = "/login";
-  } catch (err) {
-    throw err;
-  }
-}, []);
 
   const value = {
     user,

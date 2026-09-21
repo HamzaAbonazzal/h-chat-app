@@ -15,12 +15,10 @@
   --message-in: #{$light-message-in};
   --border-color: #{$light-border};
 
-  /* ⭐ Modern shadows */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 
-  /* ⭐ Transitions */
   --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-bounce: 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -49,11 +47,7 @@ body,
   margin: 0;
   padding: 0;
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-
-  // ⭐ منع التمرير الأفقي على الموبايل
   overflow-x: hidden;
-
-  // ⭐ منع "bounce scroll" على iOS
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -62,7 +56,6 @@ body {
   background-color: var(--chat-bg);
 }
 
-/* ⭐ Smooth theme transition */
 html {
   transition: background-color 0.3s ease;
 }
@@ -78,7 +71,6 @@ body,
     color var(--transition-base), border-color var(--transition-base);
 }
 
-/* ⭐ Selection */
 ::selection {
   background: rgba(0, 128, 105, 0.25);
   color: inherit;
@@ -88,15 +80,10 @@ body,
    ⭐ CHAT APP LAYOUT
    ═══════════════════════════════════════════════════════════ */
 
-// ⭐ كلاس خاص بصفحة المحادثة (تمنع التمرير على مستوى الصفحة)
 .chat-app-layout {
-  // ⭐ fallback للمتصفحات القديمة
   height: 100vh;
-
-  // ⭐ الحل الأساسي — dynamic viewport height
   height: 100dvh;
 
-  // ⭐ fallback لـ iOS Safari < 15.4
   @supports (-webkit-touch-callout: none) {
     height: -webkit-fill-available;
   }
@@ -106,14 +93,12 @@ body,
   display: flex;
   flex-direction: column;
 
-  // ⭐ دعم iPhone notch
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
 }
 
-/* ⭐ TopBar blur effect */
 .topbar-blur {
   backdrop-filter: blur(12px);
   background: rgba(var(--bs-body-bg-rgb), 0.85) !important;
@@ -135,14 +120,12 @@ body,
 ::-webkit-scrollbar-thumb {
   background: rgba(134, 150, 160, 0.4);
   border-radius: 4px;
-  transition: background-color var(--transition-fast);
 
   &:hover {
     background: rgba(134, 150, 160, 0.7);
   }
 }
 
-/* ⭐ Messages scroll container */
 .messages-scroll-container {
   overflow-y: scroll;
   overflow-x: hidden;
@@ -168,7 +151,6 @@ body,
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.04);
 }
 
-/* ⭐ Chat List Tabs */
 .chat-list-tabs {
   gap: 4px;
 
@@ -189,7 +171,6 @@ body,
   }
 }
 
-/* ⭐ Chat List Item */
 .chat-list-item {
   position: relative;
   border-left: 3px solid transparent;
@@ -269,7 +250,6 @@ body,
   }
 }
 
-/* ⭐ Circular icon buttons */
 .btn-link.rounded-circle:hover {
   background-color: var(--bs-tertiary-bg);
 }
@@ -299,29 +279,342 @@ body,
   transform: scale(1);
 }
 
-/* ═══════════════════════════════════════════════════════════
-   ⭐ FORMS
-   ═══════════════════════════════════════════════════════════ */
+/* ⭐ زر إغلاق الـ Modal — يعكس الموقع حسب اللغة */
+.modal-header {
+  .btn-close {
+    /* ⭐ الافتراضي (LTR) — X على اليمين */
+    margin: 0 0 0 auto !important;
+    padding: 0.5rem !important;
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
 
-.form-control {
-  transition: all var(--transition-fast);
-  border-radius: 10px;
-  border: 1px solid transparent;
-
-  &:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(0, 128, 105, 0.15);
-    background-color: var(--bs-body-bg);
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 
-.form-select {
-  border-radius: 10px;
+/* ⭐ RTL — X على اليسار + ترتيب معكوس */
+[dir="rtl"] .modal-header {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 0.5rem;
+
+  .modal-title {
+    flex: 1;
+    text-align: right;
+  }
+
+  .btn-close {
+    margin: 0 auto 0 0 !important;
+  }
 }
 
-.form-check-input:checked {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
+/* ═══════════════════════════════════════════════════════════
+   ⭐ FORMS (عام)
+   ═══════════════════════════════════════════════════════════ */
+
+.form-control,
+.form-select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+textarea {
+  border-radius: 10px !important;
+  border: 1.5px solid var(--bs-border-color) !important;
+  padding: 0.625rem 0.875rem !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out,
+    background-color 0.15s ease-in-out;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+
+  &::placeholder {
+    color: var(--bs-secondary-color) !important;
+    opacity: 0.7 !important;
+    font-weight: 400;
+  }
+
+  &:focus {
+    border-color: #008069 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 128, 105, 0.15) !important;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    outline: none;
+  }
+
+  &:hover:not(:focus):not(:disabled) {
+    border-color: rgba(0, 128, 105, 0.5) !important;
+  }
+
+  &:disabled {
+    background-color: var(--bs-secondary-bg);
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border-color: #dc3545 !important;
+
+  &:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15) !important;
+  }
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.6;
+}
+
+.form-control-sm {
+  border-radius: 20px !important;
+  padding: 0.5rem 1rem !important;
+  font-size: 0.875rem !important;
+}
+
+/* ⭐ الوضع الداكن */
+[data-bs-theme="dark"] {
+
+  .form-control,
+  .form-select,
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea {
+    background-color: #1f2c34 !important;
+    border-color: #2a3942 !important;
+    color: #e9edef !important;
+
+    &::placeholder {
+      color: #8696a0 !important;
+      opacity: 0.8 !important;
+    }
+
+    &:focus {
+      border-color: #00a884 !important;
+      background-color: #1f2c34 !important;
+      color: #e9edef !important;
+      box-shadow: 0 0 0 0.2rem rgba(0, 168, 132, 0.2) !important;
+    }
+
+    &:hover:not(:focus):not(:disabled) {
+      border-color: rgba(0, 168, 132, 0.6) !important;
+    }
+
+    &:disabled {
+      background-color: #111b21 !important;
+      color: #8696a0 !important;
+    }
+  }
+
+  .form-control.is-invalid {
+    border-color: #ea4335 !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ⭐ INPUT GROUP (للاستخدامات القديمة)
+   ═══════════════════════════════════════════════════════════ */
+
+.input-group {
+  .input-group-text {
+    border-radius: 10px 0 0 10px;
+    background-color: transparent;
+    border: 1.5px solid var(--bs-border-color);
+    border-right: none;
+    color: var(--bs-secondary-color);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .form-control {
+    border-radius: 0 10px 10px 0 !important;
+    border-left: none !important;
+  }
+
+  &:focus-within {
+    .input-group-text {
+      border-color: #008069;
+      color: #008069;
+    }
+
+    .form-control {
+      border-color: #008069 !important;
+    }
+  }
+}
+
+[data-bs-theme="dark"] .input-group {
+  &:focus-within {
+    .input-group-text {
+      border-color: #00a884;
+      color: #00a884;
+    }
+  }
+}
+
+[dir="rtl"] {
+  .input-group {
+    .input-group-text {
+      border-radius: 0 10px 10px 0;
+      border-right: 1.5px solid var(--bs-border-color);
+      border-left: none;
+    }
+
+    .form-control {
+      border-radius: 10px 0 0 10px !important;
+      border-right: none !important;
+      border-left: 1.5px solid var(--bs-border-color) !important;
+    }
+
+    &:focus-within .form-control {
+      border-left-color: #008069 !important;
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ⭐ INPUT FIELD (مكوّن مخصص يدعم RTL بشكل صحيح)
+   ═══════════════════════════════════════════════════════════ */
+
+.input-field-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.input-field-icon {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bs-secondary-color);
+  pointer-events: none;
+  transition: color 0.15s ease;
+
+  i {
+    font-size: 1.05rem;
+  }
+}
+
+.input-field-end {
+  position: absolute;
+  inset-inline-end: 0;
+  top: 0;
+  bottom: 0;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--bs-secondary-color);
+  z-index: 2;
+
+  .btn {
+    padding: 0.25rem;
+    color: var(--bs-secondary-color);
+    border: none;
+    background: transparent;
+
+    &:hover,
+    &:focus {
+      color: #008069;
+      box-shadow: none;
+    }
+  }
+}
+
+.input-field-control {
+  width: 100%;
+  padding: 0.625rem 0.875rem !important;
+  border-radius: 10px !important;
+  border: 1.5px solid var(--bs-border-color) !important;
+  font-size: 0.95rem !important;
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+
+  &.has-start-icon {
+    padding-inline-start: 44px !important;
+  }
+
+  &.has-end-adornment {
+    padding-inline-end: 44px !important;
+  }
+
+  &::placeholder {
+    color: var(--bs-secondary-color) !important;
+    opacity: 0.7 !important;
+  }
+
+  &:focus {
+    border-color: #008069 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 128, 105, 0.15) !important;
+    outline: none;
+  }
+
+  &:hover:not(:focus):not(:disabled) {
+    border-color: rgba(0, 128, 105, 0.5) !important;
+  }
+
+  &:disabled {
+    background-color: var(--bs-secondary-bg);
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &.is-invalid {
+    border-color: #dc3545 !important;
+
+    &:focus {
+      border-color: #dc3545 !important;
+      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.15) !important;
+    }
+  }
+}
+
+.input-field-wrapper:focus-within {
+  .input-field-icon {
+    color: #008069;
+  }
+}
+
+[data-bs-theme="dark"] {
+  .input-field-control {
+    background-color: #1f2c34 !important;
+    border-color: #2a3942 !important;
+    color: #e9edef !important;
+
+    &::placeholder {
+      color: #8696a0 !important;
+      opacity: 0.8 !important;
+    }
+
+    &:focus {
+      border-color: #00a884 !important;
+      background-color: #1f2c34 !important;
+      box-shadow: 0 0 0 0.2rem rgba(0, 168, 132, 0.2) !important;
+    }
+
+    &:hover:not(:focus):not(:disabled) {
+      border-color: rgba(0, 168, 132, 0.6) !important;
+    }
+  }
+
+  .input-field-wrapper:focus-within .input-field-icon {
+    color: #00a884;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -330,6 +623,13 @@ body,
 
 .message-bubble-body {
   animation: messageIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: default;
+  user-select: text;
+}
+
+.message-bubble-body:active {
+  transform: scale(0.99);
+  transition: transform 0.05s;
 }
 
 @keyframes messageIn {
@@ -344,7 +644,6 @@ body,
   }
 }
 
-/* ⭐ Reply Quote */
 .reply-quote {
   cursor: pointer;
   transition: background-color var(--transition-fast);
@@ -358,7 +657,6 @@ body,
   }
 }
 
-/* ⭐ Message highlight (jump-to) */
 @keyframes messageHighlightFlash {
   0% {
     box-shadow: 0 0 0 0 rgba(0, 128, 105, 0);
@@ -377,7 +675,6 @@ body,
   animation: messageHighlightFlash 1.5s ease-out;
 }
 
-/* ⭐ Video wrapper */
 .video-message-wrapper {
   cursor: pointer;
 
@@ -497,7 +794,6 @@ body,
   }
 }
 
-/* ⭐ Emoji Picker */
 .emoji-picker-popover {
   animation: emojiPickerIn 0.15s ease-out;
 }
@@ -528,7 +824,7 @@ body,
 }
 
 /* ═══════════════════════════════════════════════════════════
-   ⭐ ANIMATIONS
+   ⭐ ANIMATIONS (عامة)
    ═══════════════════════════════════════════════════════════ */
 
 @keyframes lightboxFadeIn {
@@ -565,7 +861,6 @@ body,
   }
 }
 
-/* ⭐ Scroll to bottom button */
 .scroll-to-bottom-btn {
   transition: all var(--transition-fast);
 
@@ -602,7 +897,6 @@ body,
   min-width: 0;
 }
 
-/* ⭐ Skeleton loader */
 .skeleton {
   background: linear-gradient(90deg,
       var(--bs-tertiary-bg) 25%,
@@ -624,21 +918,53 @@ body,
 }
 
 /* ⭐ Nav pills */
-.nav-pills .nav-link.active {
-  background-color: #008069;
-  color: #fff;
-}
-
 .nav-pills .nav-link {
   color: var(--bs-body-color);
-  transition: all 0.2s ease;
+  background-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
+
+  i {
+    color: inherit;
+    transition: color 0.2s ease;
+  }
 
   &:hover {
     background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+
+    i {
+      color: inherit;
+    }
+  }
+
+  &:focus {
+    background-color: var(--bs-tertiary-bg);
+    color: var(--bs-body-color);
+    box-shadow: none;
+    outline: none;
   }
 }
 
-/* ⭐ Link preview card */
+.nav-pills .nav-link.active {
+  background-color: #008069 !important;
+  color: #ffffff !important;
+  font-weight: 600;
+
+  i {
+    color: #ffffff !important;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: #006a56 !important;
+    color: #ffffff !important;
+
+    i {
+      color: #ffffff !important;
+    }
+  }
+}
+
 .link-preview-card {
   transition: box-shadow var(--transition-fast);
 
@@ -647,7 +973,6 @@ body,
   }
 }
 
-/* ⭐ Call Log Item */
 .call-log-item {
   border: 1px solid transparent;
   transition: all var(--transition-fast);
@@ -686,7 +1011,6 @@ body,
     }
   }
 
-  /* ⭐ قلب الأيقونات في RTL */
   .bi-arrow-left,
   .bi-arrow-right {
     transform: scaleX(-1);
@@ -694,7 +1018,7 @@ body,
 }
 
 /* ═══════════════════════════════════════════════════════════
-   ⭐ MEDIA BUBBLES ENHANCEMENTS
+   ⭐ MEDIA BUBBLES
    ═══════════════════════════════════════════════════════════ */
 
 .media-bubble-wrapper {
@@ -715,7 +1039,6 @@ body,
   }
 }
 
-/* ⭐ Video bubble */
 .video-bubble-wrapper {
   &:hover {
     .video-play-button {
@@ -726,19 +1049,16 @@ body,
   }
 }
 
-/* ⭐ Media Lightbox */
 .media-lightbox {
   animation: lightboxFadeIn 0.2s ease-out;
 }
 
-/* ⭐ Prevent img drag */
 .media-bubble-wrapper img,
 .media-lightbox img {
   -webkit-user-drag: none;
   user-select: none;
 }
 
-/* ⭐ Custom scrollbar for thumbnails */
 .media-lightbox div[style*="overflowX"]::-webkit-scrollbar {
   height: 6px;
 }
@@ -749,17 +1069,15 @@ body,
 }
 
 /* ═══════════════════════════════════════════════════════════
-   ⭐ MESSAGE MENU TOGGLE (Chevron)
+   ⭐ MESSAGE MENU TOGGLE
    ═══════════════════════════════════════════════════════════ */
 
-/* ⭐ إخفاء caret الافتراضي من Bootstrap */
 .msg-menu-toggle::after,
 .msg-menu-toggle.dropdown-toggle::after {
   display: none !important;
 }
 
 .msg-menu-toggle {
-  /* ⭐ شكل أنيق للسهم */
   transition: all 0.2s ease;
 
   i {
@@ -781,13 +1099,11 @@ body,
     transform: scale(0.95);
   }
 
-  /* ⭐ في الوضع الداكن */
   [data-bs-theme="dark"] &:hover {
     background-color: rgba(255, 255, 255, 0.15) !important;
   }
 }
 
-/* ⭐ توافق مع الوسائط (خلفية داكنة عند الحاجة) */
 .msg-menu-toggle-media {
   &:hover {
     background-color: rgba(0, 128, 105, 0.9) !important;
@@ -798,7 +1114,6 @@ body,
    ⭐ SESSION 26.1 — UX ENHANCEMENTS
    ═══════════════════════════════════════════════════════════ */
 
-/* ⭐ Toast Animations */
 @keyframes toastSlideIn {
   from {
     opacity: 0;
@@ -815,7 +1130,6 @@ body,
   will-change: transform, opacity;
 }
 
-/* ⭐ في RTL — من اليسار */
 [dir="rtl"] .toast-item {
   animation: toastSlideInRTL 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -832,7 +1146,6 @@ body,
   }
 }
 
-/* ⭐ Connection Banner */
 @keyframes bannerSlideDown {
   from {
     opacity: 0;
@@ -849,7 +1162,6 @@ body,
   will-change: transform, opacity;
 }
 
-/* ⭐ Double-tap Heart Animation */
 @keyframes heartPop {
   0% {
     opacity: 0;
@@ -874,17 +1186,6 @@ body,
 
 .double-tap-heart {
   will-change: transform, opacity;
-}
-
-/* ⭐ Smooth message click */
-.message-bubble-body {
-  cursor: default;
-  user-select: text;
-}
-
-.message-bubble-body:active {
-  transform: scale(0.99);
-  transition: transform 0.05s;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1147,12 +1448,14 @@ body,
   }
 }
 
-/* ⭐ في الوضع الداكن */
 [data-bs-theme="dark"] .unread-divider-badge {
   background: linear-gradient(135deg, #00a884, #14c28b);
 }
 
-// ⭐ منع تكبير الشاشة عند الكتابة في input على iOS
+/* ═══════════════════════════════════════════════════════════
+   ⭐ RESPONSIVE — MOBILE
+   ═══════════════════════════════════════════════════════════ */
+
 @media screen and (max-width: 768px) {
 
   input,
@@ -1162,35 +1465,26 @@ body,
   }
 }
 
-// ⭐ ضبط حقل الإدخال أسفل الشاشة
 .message-input-container {
-  // ⭐ يبقى ثابتاً في الأسفل
   flex-shrink: 0;
   width: 100%;
-
-  // ⭐ دعم notch أسفل الشاشة (iPhone)
   padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
   background-color: var(--bs-body-bg);
 }
 
-// ⭐ منع الشريط العلوي من تغطية الـ header
 .chat-app-header {
   flex-shrink: 0;
-  // ⭐ إذا كان المتصفح يعرض شريط العنوان، فهذا يبقي الـ header في مكانه
   position: relative;
   z-index: 10;
 }
 
-// ⭐ على الشاشات الصغيرة — نتحكم في المساحة بين العناصر
 @media (max-width: 576px) {
   .chat-app-layout {
-    // ⭐ لا نستخدم vh هنا — نبقي dvh
     height: 100dvh;
     max-height: 100dvh;
   }
 }
 
-// ⭐ أحجام الأيقونات المتجاوبة
 .fs-6 {
   font-size: 1.1rem !important;
 }
@@ -1201,9 +1495,169 @@ body,
   }
 }
 
-// ⭐ تقليل الحشو على الموبايل
 @media (max-width: 575.98px) {
   .chat-header-btn {
     padding: 0.25rem !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ⭐ MESSAGE INPUT (دائري)
+   ═══════════════════════════════════════════════════════════ */
+
+.message-input textarea.form-control,
+textarea.form-control.border-0 {
+  border-radius: 22px !important;
+  border: none !important;
+  background-color: var(--bs-tertiary-bg) !important;
+  padding: 0.625rem 1rem !important;
+
+  &:focus {
+    box-shadow: none !important;
+    background-color: var(--bs-tertiary-bg) !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ⭐ AUTH PAGES — RESPONSIVE
+   ═══════════════════════════════════════════════════════════ */
+
+@media (max-height: 700px) {
+  .auth-layout-wrapper {
+    align-items: flex-start !important;
+    padding-top: 2rem !important;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .card-body {
+    padding: 1rem !important;
+  }
+
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .card-body {
+    padding: 0.875rem !important;
+  }
+
+  .auth-logo {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 1.4rem !important;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .auth-layout-wrapper {
+    align-items: flex-start !important;
+    padding-top: 1rem !important;
+  }
+
+  .auth-logo {
+    display: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ⭐ AUTH TOOLBAR — الوضع + اللغة
+   ═══════════════════════════════════════════════════════════ */
+
+.auth-toolbar-wrapper {
+  /* ⭐ منع التمرير الأفقي حتى لو حدث تجاوز */
+  overflow-x: hidden;
+}
+
+.auth-toolbar {
+  /* ⭐ لا يتجاوز عرض الشاشة */
+  max-width: 100%;
+  flex-wrap: nowrap;
+
+  /* ⭐ على الشاشات الضيقة جداً، التفاف */
+  @media (max-width: 360px) {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+}
+
+/* ⭐ الأزرار الموحّدة */
+.language-toggle-btn,
+.theme-toggle-btn {
+  background-color: var(--bs-body-bg) !important;
+  border: 1px solid var(--bs-border-color) !important;
+  color: var(--bs-body-color) !important;
+  transition: all 0.15s ease;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  /* ⭐ لا تنمو أكثر من اللازم */
+  min-width: 0;
+  flex-shrink: 0;
+
+  &:hover,
+  &:focus {
+    background-color: var(--bs-tertiary-bg) !important;
+    border-color: #008069 !important;
+    color: #008069 !important;
+    box-shadow: none !important;
+  }
+
+  i {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  &::after {
+    display: none !important;
+  }
+}
+
+/* ⭐ الوضع الداكن */
+[data-bs-theme="dark"] {
+
+  .language-toggle-btn,
+  .theme-toggle-btn {
+    background-color: #1f2c34 !important;
+    border-color: #2a3942 !important;
+    color: #e9edef !important;
+
+    &:hover,
+    &:focus {
+      background-color: #2a3942 !important;
+      border-color: #00a884 !important;
+      color: #00a884 !important;
+    }
+  }
+}
+
+/* ⭐ الموبايل — زرّان بأيقونات فقط */
+@media (max-width: 575.98px) {
+  .auth-toolbar {
+    gap: 0.5rem !important;
+  }
+
+  .language-toggle-btn,
+  .theme-toggle-btn {
+    padding: 0.5rem 0.65rem !important;
+    font-size: 0.85rem !important;
+
+    i {
+      font-size: 1.05rem;
+    }
+  }
+}
+
+/* ⭐ الشاشات الصغيرة جداً — تصغير أكثر */
+@media (max-width: 360px) {
+  .auth-toolbar-wrapper {
+    padding-inline: 0.5rem !important;
+  }
+
+  .language-toggle-btn,
+  .theme-toggle-btn {
+    padding: 0.4rem 0.55rem !important;
   }
 }
