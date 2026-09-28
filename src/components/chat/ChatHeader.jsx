@@ -44,8 +44,12 @@ const ChatHeader = ({
     ? null
     : conversation?.participants.find((p) => p._id !== currentUserId);
 
+  // ⭐ هل الطرف الآخر حساب محذوف؟
+  const isDeletedAccount = otherUser?.isDeleted === true;
+
   useEffect(() => {
-    if (!otherUser) return;
+    // ⭐ لا تفحص الحظر لحساب محذوف
+    if (!otherUser || isDeletedAccount) return;
 
     const check = async () => {
       try {
@@ -57,7 +61,7 @@ const ChatHeader = ({
     };
 
     check();
-  }, [otherUser?._id]);
+  }, [otherUser?._id, isDeletedAccount]);
 
   if (!conversation) return null;
 
@@ -80,6 +84,9 @@ const ChatHeader = ({
         : t("common.offline");
 
   const handleClickHeader = () => {
+    // ⭐ لا تفتح الملف الشخصي لحساب محذوف
+    if (isDeletedAccount) return;
+
     if (conversation.isGroup) {
       onOpenGroupInfo?.();
     } else if (otherUser) {
@@ -87,31 +94,63 @@ const ChatHeader = ({
     }
   };
 
-  // ⭐ بدء مكالمة صوتية فردية
+  // ⭐ بدء مكالمات — معطّلة للحسابات المحذوفة
   const handleVoiceCall = () => {
-    if (otherUser) {
+    if (otherUser && !isDeletedAccount) {
       startCall(otherUser._id, otherUser, "voice");
     }
   };
 
-  // ⭐ بدء مكالمة مرئية فردية
   const handleVideoCall = () => {
-    if (otherUser) {
+    if (otherUser && !isDeletedAccount) {
       startCall(otherUser._id, otherUser, "video");
     }
   };
 
-  // ⭐ بدء مكالمة جماعية صوتية
   const handleGroupVoiceCall = () => {
     if (conversation.isGroup) {
       startGroupCall(conversation, "voice");
     }
   };
 
-  // ⭐ بدء مكالمة جماعية مرئية
   const handleGroupVideoCall = () => {
     if (conversation.isGroup) {
       startGroupCall(conversation, "video");
+    }
+  };
+
+  // ⭐ حذف المحادثة — يعمل حتى مع حساب محذوف
+  const handleDelete = async () => {
+    console.log("🗑️ [DELETE] Starting...");
+    console.log("   Conversation ID:", conversation._id);
+
+    setLoading(true);
+    try {
+      const result = await conversationService.deleteConversation(
+        conversation._id,
+      );
+
+      console.log("✅ [DELETE] Success:", result);
+
+      setShowDeleteModal(false);
+
+      // ⭐ أزل من القائمة
+      if (onConversationDeleted) {
+        onConversationDeleted(conversation._id);
+      }
+
+      // ⭐ اذهب للصفحة الرئيسية
+      navigate("/");
+    } catch (err) {
+      console.error("❌ [DELETE] Failed:", err);
+      console.error("   Response:", err.response?.data);
+      console.error("   Status:", err.response?.status);
+
+      alert(
+        err.response?.data?.message || err.message || t("common.error"),
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -138,20 +177,6 @@ const ChatHeader = ({
       setShowUnblockModal(false);
     } catch (err) {
       console.error("Unblock failed:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    setLoading(true);
-    try {
-      await conversationService.deleteConversation(conversation._id);
-      setShowDeleteModal(false);
-      onConversationDeleted?.(conversation._id);
-      navigate("/");
-    } catch (err) {
-      console.error("Delete failed:", err);
     } finally {
       setLoading(false);
     }
@@ -190,7 +215,9 @@ const ChatHeader = ({
 
         {/* ⭐ الصورة + الاسم */}
         <div
-          className="d-flex align-items-center gap-2 flex-grow-1 min-w-0 cursor-pointer"
+          className={`d-flex align-items-center gap-2 flex-grow-1 min-w-0 ${
+            !isDeletedAccount ? "cursor-pointer" : ""
+          }`}
           onClick={handleClickHeader}
         >
           <Avatar user={displayUser} size={42} showOnline isOnline={isOnline} />
@@ -208,7 +235,7 @@ const ChatHeader = ({
                 color: isOnline ? "#25d366" : "var(--bs-secondary-color)",
               }}
             >
-              {otherUser?.isDeleted ? (
+              {isDeletedAccount ? (
                 <span className="text-muted fst-italic">
                   <i className="bi bi-person-x me-1"></i>
                   {t("chat.deletedAccount")}
@@ -220,7 +247,7 @@ const ChatHeader = ({
           </div>
         </div>
 
-        {/* ⭐ الأزرار — أحجام متجاوبة للموبايل */}
+        {/* ⭐ الأزرار */}
         <div className="d-flex align-items-center gap-0 gap-sm-1 flex-shrink-0">
           {/* زر البحث */}
           <Button
@@ -232,8 +259,8 @@ const ChatHeader = ({
             <i className="bi bi-search fs-6 fs-sm-5"></i>
           </Button>
 
-          {/* ⭐ أزرار المكالمة الفردية — الآن مرئية على الموبايل */}
-          {!conversation.isGroup && otherUser && (
+          {/* ⭐ أزرار المكالمة الفردية */}
+          {!conversation.isGroup && otherUser && !isDeletedAccount && (
             <>
               <Button
                 variant="link"
@@ -256,7 +283,7 @@ const ChatHeader = ({
             </>
           )}
 
-          {/* ⭐ أزرار المكالمة الجماعية — الآن مرئية على الموبايل */}
+          {/* ⭐ أزرار المكالمة الجماعية */}
           {conversation.isGroup && (
             <>
               <Button
@@ -296,8 +323,8 @@ const ChatHeader = ({
                 </Dropdown.Item>
               )}
 
-              {/* الملف الشخصي */}
-              {!conversation.isGroup && otherUser && (
+              {/* الملف الشخصي — مخفي للحسابات المحذوفة */}
+              {!conversation.isGroup && otherUser && !isDeletedAccount && (
                 <Dropdown.Item
                   onClick={() => navigate(`/profile/${otherUser._id}`)}
                 >
@@ -308,140 +335,142 @@ const ChatHeader = ({
 
               <Dropdown.Divider />
 
-              {/* ⭐ المكالمات أيضاً في القائمة — احتياط للموبايل */}
-              {!conversation.isGroup && otherUser && (
-                <>
-                  <Dropdown.Item
-                    onClick={handleVoiceCall}
-                    disabled={blockStatus.iBlockedThem}
-                  >
-                    <i className="bi bi-telephone me-2"></i>
-                    {t("call.voiceCall")}
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    onClick={handleVideoCall}
-                    disabled={blockStatus.iBlockedThem}
-                  >
-                    <i className="bi bi-camera-video me-2"></i>
-                    {t("call.videoCall")}
-                  </Dropdown.Item>
-                  <Dropdown.Divider />
-                </>
-              )}
-
-              {conversation.isGroup && (
-                <>
-                  <Dropdown.Item onClick={handleGroupVoiceCall}>
-                    <i className="bi bi-telephone-plus me-2"></i>
-                    {t("call.groupCall", "مكالمة جماعية صوتية")}
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={handleGroupVideoCall}>
-                    <i className="bi bi-camera-video me-2"></i>
-                    {t("call.groupVideoCall", "مكالمة جماعية مرئية")}
-                  </Dropdown.Item>
-                  <Dropdown.Divider />
-                </>
-              )}
-
-              {/* تثبيت */}
-              <Dropdown.Item onClick={onTogglePin}>
-                <i
-                  className={`bi ${
-                    conversation.isPinned ? "bi-pin-angle" : "bi-pin-angle-fill"
-                  } me-2`}
-                ></i>
-                {conversation.isPinned ? t("chat.unpin") : t("chat.pin")}
-              </Dropdown.Item>
-
-              {/* كتم */}
-              {conversation.isMuted ? (
-                <Dropdown.Item onClick={() => onToggleMute(null)}>
-                  <i className="bi bi-bell me-2"></i>
-                  {t("chat.unmute")}
+              {/* ⭐ عند الحساب المحذوف: نُظهر فقط "حذف المحادثة" */}
+              {isDeletedAccount ? (
+                <Dropdown.Item
+                  className="text-danger"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("🗑️ [DELETE] Opening modal...");
+                    console.log("   Current state:", showDeleteModal);
+                    setShowDeleteModal(true);
+                    console.log("   After setState: true");
+                  }}
+                >
+                  <i className="bi bi-trash me-2"></i>
+                  {t("chat.deleteConversation")}
                 </Dropdown.Item>
               ) : (
-                <Dropdown drop="end">
-                  <Dropdown.Toggle
-                    as="div"
-                    bsPrefix="dropdown-item"
-                    style={{ cursor: "pointer" }}
-                  >
-                    <i className="bi bi-bell-slash me-2"></i>
-                    {t("chat.mute")}
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => onToggleMute("8h")}>
-                      {t("chat.muteFor8h")}
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={() => onToggleMute("1w")}>
-                      {t("chat.muteFor1w")}
-                    </Dropdown.Item>
-                    <Dropdown.Item onClick={() => onToggleMute("always")}>
-                      {t("chat.muteAlways")}
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              )}
-
-              {/* أرشفة */}
-              <Dropdown.Item onClick={onToggleArchive}>
-                <i
-                  className={`bi ${
-                    conversation.isArchived ? "bi-box-arrow-up" : "bi-archive"
-                  } me-2`}
-                ></i>
-                {conversation.isArchived
-                  ? t("chat.unarchive")
-                  : t("chat.archive")}
-              </Dropdown.Item>
-
-              {/* الرسائل المؤقتة */}
-              <Dropdown.Item onClick={onOpenDisappearing}>
-                <i className="bi bi-clock-history me-2"></i>
-                {t("chat.disappearingMessages")}
-              </Dropdown.Item>
-
-              {/* مسح المحادثة */}
-              <Dropdown.Item onClick={() => setShowClearModal(true)}>
-                <i className="bi bi-eraser me-2"></i>
-                {t("chat.clearChat")}
-              </Dropdown.Item>
-
-              {/* حظر / إلغاء حظر */}
-              {!conversation.isGroup && otherUser && (
                 <>
-                  <Dropdown.Divider />
-                  {blockStatus.iBlockedThem ? (
-                    <Dropdown.Item
-                      onClick={() => setShowUnblockModal(true)}
-                      className="text-success"
-                    >
-                      <i className="bi bi-check-circle me-2"></i>
-                      {t("chat.unblockUser")}
+                  {/* تثبيت */}
+                  <Dropdown.Item onClick={onTogglePin}>
+                    <i
+                      className={`bi ${
+                        conversation.isPinned
+                          ? "bi-pin-angle"
+                          : "bi-pin-angle-fill"
+                      } me-2`}
+                    ></i>
+                    {conversation.isPinned ? t("chat.unpin") : t("chat.pin")}
+                  </Dropdown.Item>
+
+                  {/* كتم */}
+                  {conversation.isMuted ? (
+                    <Dropdown.Item onClick={() => onToggleMute(null)}>
+                      <i className="bi bi-bell me-2"></i>
+                      {t("chat.unmute")}
                     </Dropdown.Item>
                   ) : (
-                    <Dropdown.Item
-                      onClick={() => setShowBlockModal(true)}
-                      className="text-danger"
-                    >
-                      <i className="bi bi-slash-circle me-2"></i>
-                      {t("chat.blockUser")}
-                    </Dropdown.Item>
+                    <Dropdown drop="end">
+                      <Dropdown.Toggle
+                        as="div"
+                        bsPrefix="dropdown-item"
+                        style={{ cursor: "pointer" }}
+                      >
+                        <i className="bi bi-bell-slash me-2"></i>
+                        {t("chat.mute")}
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => onToggleMute("8h")}>
+                          {t("chat.muteFor8h")}
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => onToggleMute("1w")}>
+                          {t("chat.muteFor1w")}
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => onToggleMute("always")}>
+                          {t("chat.muteAlways")}
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
                   )}
-                </>
-              )}
 
-              {/* حذف المحادثة (فردية فقط) */}
-              {!conversation.isGroup && (
-                <>
-                  <Dropdown.Divider />
-                  <Dropdown.Item
-                    className="text-danger"
-                    onClick={() => setShowDeleteModal(true)}
-                  >
-                    <i className="bi bi-trash me-2"></i>
-                    {t("chat.deleteConversation")}
+                  {/* أرشفة */}
+                  <Dropdown.Item onClick={onToggleArchive}>
+                    <i
+                      className={`bi ${
+                        conversation.isArchived
+                          ? "bi-box-arrow-up"
+                          : "bi-archive"
+                      } me-2`}
+                    ></i>
+                    {conversation.isArchived
+                      ? t("chat.unarchive")
+                      : t("chat.archive")}
                   </Dropdown.Item>
+
+                  {/* الرسائل المؤقتة */}
+                  <Dropdown.Item onClick={onOpenDisappearing}>
+                    <i className="bi bi-clock-history me-2"></i>
+                    {t("chat.disappearingMessages")}
+                  </Dropdown.Item>
+
+                  {/* مسح المحادثة */}
+                  <Dropdown.Item
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowClearModal(true);
+                    }}
+                  >
+                    <i className="bi bi-eraser me-2"></i>
+                    {t("chat.clearChat")}
+                  </Dropdown.Item>
+
+                  {/* حظر / إلغاء حظر */}
+                  {!conversation.isGroup && otherUser && (
+                    <>
+                      <Dropdown.Divider />
+                      {blockStatus.iBlockedThem ? (
+                        <Dropdown.Item
+                          onClick={() => setShowUnblockModal(true)}
+                          className="text-success"
+                        >
+                          <i className="bi bi-check-circle me-2"></i>
+                          {t("chat.unblockUser")}
+                        </Dropdown.Item>
+                      ) : (
+                        <Dropdown.Item
+                          onClick={() => setShowBlockModal(true)}
+                          className="text-danger"
+                        >
+                          <i className="bi bi-slash-circle me-2"></i>
+                          {t("chat.blockUser")}
+                        </Dropdown.Item>
+                      )}
+                    </>
+                  )}
+
+                  {/* حذف المحادثة (فردية) */}
+                  {!conversation.isGroup && (
+                    <>
+                      <Dropdown.Divider />
+                      <Dropdown.Item
+                        className="text-danger"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log("🗑️ [DELETE] Opening modal...");
+                          console.log("   Current state:", showDeleteModal);
+                          setShowDeleteModal(true);
+                          console.log("   After setState: true");
+                        }}
+                      >
+                        <i className="bi bi-trash me-2"></i>
+                        {t("chat.deleteConversation")}
+                      </Dropdown.Item>
+                    </>
+                  )}
                 </>
               )}
             </Dropdown.Menu>
@@ -449,14 +478,30 @@ const ChatHeader = ({
         </div>
       </div>
 
-      {/* ⭐ Modal الحظر */}
-      {otherUser && (
+      {/* ⭐ Modal حذف المحادثة — يعمل في الحالتين */}
+      <ConfirmModal
+        show={showDeleteModal}
+        onHide={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+        title={t("chat.deleteConversation")}
+        message={t("chat.deleteConversationConfirm")}
+        confirmText={t("common.delete")}
+        confirmVariant="danger"
+        loading={loading}
+        icon="bi-trash"
+      />
+
+      {/* ⭐ Modals الحظر — مخفية للحسابات المحذوفة */}
+      {otherUser && !isDeletedAccount && (
         <>
           <ConfirmModal
             show={showBlockModal}
             onHide={() => setShowBlockModal(false)}
             onConfirm={handleBlock}
-            title={`${t("chat.blockUser")} ${getDisplayName(otherUser, t("chat.deletedAccount"))}؟`}
+            title={`${t("chat.blockUser")} ${getDisplayName(
+              otherUser,
+              t("chat.deletedAccount"),
+            )}؟`}
             message={t("chat.blockUserConfirm")}
             confirmText={t("chat.blockUser")}
             confirmVariant="danger"
@@ -468,24 +513,15 @@ const ChatHeader = ({
             show={showUnblockModal}
             onHide={() => setShowUnblockModal(false)}
             onConfirm={handleUnblock}
-            title={`${t("chat.unblockUser")} ${getDisplayName(otherUser, t("chat.deletedAccount"))}؟`}
+            title={`${t("chat.unblockUser")} ${getDisplayName(
+              otherUser,
+              t("chat.deletedAccount"),
+            )}؟`}
             message={t("chat.unblockUserConfirm")}
             confirmText={t("chat.unblockUser")}
             confirmVariant="success"
             loading={loading}
             icon="bi-check-circle"
-          />
-
-          <ConfirmModal
-            show={showDeleteModal}
-            onHide={() => setShowDeleteModal(false)}
-            onConfirm={handleDelete}
-            title={t("chat.deleteConversation")}
-            message={t("chat.deleteConversationConfirm")}
-            confirmText={t("common.delete")}
-            confirmVariant="danger"
-            loading={loading}
-            icon="bi-trash"
           />
         </>
       )}

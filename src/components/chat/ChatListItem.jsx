@@ -17,8 +17,8 @@ const ChatListItem = ({
     : conversation.participants.find((p) => p._id !== currentUserId);
 
   const displayName = conversation.isGroup
-    ? conversation.name
-    : getDisplayName(otherUser, t("chat.deletedAccount"));
+  ? conversation.name
+  : getDisplayName(otherUser, t("chat.deletedAccount"));
   const displayUser = conversation.isGroup
     ? { username: conversation.name, avatar: conversation.groupAvatar }
     : otherUser;

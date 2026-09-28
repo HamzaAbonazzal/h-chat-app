@@ -41,7 +41,6 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // إذا انتهت الجلسة (401) ولم نكن نجرب refresh
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
@@ -49,7 +48,6 @@ api.interceptors.response.use(
       !originalRequest.url.includes("/auth/login")
     ) {
       if (isRefreshing) {
-        // انتظر حتى ينتهي الـ refresh الحالي
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -66,9 +64,8 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem("refreshToken");
 
       if (!refreshToken) {
-        // لا يوجد refresh token → اخرج
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.hash = "#/login";
         return Promise.reject(error);
       }
 
@@ -88,7 +85,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
         localStorage.clear();
-        window.location.href = "/login";
+        window.location.hash = "#/login";
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

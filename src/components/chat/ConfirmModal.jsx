@@ -15,14 +15,21 @@ const ConfirmModal = ({
   const { t } = useTranslation();
 
   return (
-    <Modal show={show} onHide={onHide} centered backdrop="static">
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      backdrop="static"
+      container={document.body}  // ⭐ مهم — يضع Modal مباشرة في body
+      style={{ zIndex: 99999 }}  // ⭐ أعلى z-index
+    >
       <Modal.Body className="text-center p-4">
         <div
           className={`d-inline-flex align-items-center justify-content-center rounded-circle mb-3 text-${confirmVariant}`}
           style={{
             width: "70px",
             height: "70px",
-            backgroundColor: `var(--bs-${confirmVariant}-bg-subtle, rgba(220, 53, 69, 0.1))`,
+            backgroundColor: `rgba(var(--bs-${confirmVariant}-rgb), 0.12)`,
             fontSize: "2rem",
           }}
         >

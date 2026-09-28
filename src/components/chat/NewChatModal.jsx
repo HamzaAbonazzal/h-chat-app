@@ -23,9 +23,14 @@ const NewChatModal = ({ show, onHide, onConversationCreated }) => {
       setLoading(true);
       try {
         const data = await userService.searchUsers(search);
-        setUsers(data);
+
+        // ⭐ فلترة احتياطية: استثناء الحسابات المحذوفة
+        const validUsers = (data || []).filter((u) => !u.isDeleted);
+
+        setUsers(validUsers);
       } catch (err) {
         console.error("Search failed:", err);
+        setUsers([]);
       } finally {
         setLoading(false);
       }
@@ -38,12 +43,14 @@ const NewChatModal = ({ show, onHide, onConversationCreated }) => {
   const handleSelectUser = async (userId) => {
     setCreating(userId);
     try {
-      const conversation =
-        await conversationService.createOrGetConversation(userId);
+      const conversation = await conversationService.createOrGetConversation(
+        userId
+      );
       onConversationCreated?.(conversation);
       onHide();
     } catch (err) {
       console.error("Failed to create conversation:", err);
+      alert(err.response?.data?.message || t("common.error"));
     } finally {
       setCreating(null);
     }
@@ -52,7 +59,9 @@ const NewChatModal = ({ show, onHide, onConversationCreated }) => {
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title className="fs-6 fw-bold">{t("chat.newChat")}</Modal.Title>
+        <Modal.Title className="fs-6 fw-bold">
+          {t("chat.newChat")}
+        </Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
@@ -71,7 +80,7 @@ const NewChatModal = ({ show, onHide, onConversationCreated }) => {
           </div>
         ) : users.length === 0 ? (
           <div className="text-center text-muted py-4 small">
-            {search ? "No users found" : "Start typing to search"}
+            {search ? t("chat.noResults") : t("chat.startTyping")}
           </div>
         ) : (
           <ListGroup
