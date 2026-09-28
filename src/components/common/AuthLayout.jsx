@@ -35,18 +35,15 @@ const AuthLayout = ({ title, subtitle, children, footerLink }) => {
             <Card.Body className="p-3 p-sm-4 p-md-5">
               {/* ⭐ الشعار والعنوان */}
               <div className="text-center mb-3 mb-sm-4">
-                <div
-                  className="d-inline-flex align-items-center justify-content-center rounded-circle mb-2 mb-sm-3"
+                <img
+                  src="/favicon.svg"
+                  alt="Chat App"
+                  className="mb-2 mb-sm-3"
                   style={{
-                    width: "clamp(56px, 15vw, 70px)",
-                    height: "clamp(56px, 15vw, 70px)",
-                    backgroundColor: "#008069",
-                    color: "#fff",
-                    fontSize: "clamp(1.5rem, 5vw, 2rem)",
+                    width: "clamp(64px, 15vw, 80px)",
+                    height: "clamp(64px, 15vw, 80px)",
                   }}
-                >
-                  <i className="bi bi-chat-dots-fill"></i>
-                </div>
+                />
                 <h3
                   className="fw-bold mb-1"
                   style={{ fontSize: "clamp(1.15rem, 4.5vw, 1.5rem)" }}

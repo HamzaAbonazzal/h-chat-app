@@ -207,10 +207,18 @@ const ChatPage = () => {
         }}
       >
         <div className="d-flex align-items-center gap-3">
-          <Avatar user={user} size={40} showOnline isOnline={isConnected} />
-          <div className="d-none d-sm-block">
-            <div className="fw-semibold small">{user?.username}</div>
-            <div
+          {/* <Avatar user={user} size={40} showOnline isOnline={isConnected} /> */}
+          <div className="d-none d-sm-flex gap-2">
+            <div className="d-flex align-items-center gap-2">
+              <img
+                src="/favicon.svg"
+                alt="Logo"
+                style={{ width: "32px", height: "32px" }}
+              />
+              {/* <span className="fw-bold d-none d-sm-inline">H Chat App</span> */}
+            </div>
+            <div className="fw-semibold small">H Chat App</div>
+            {/* <div
               className="small"
               style={{
                 color: isConnected ? "#25d366" : "var(--bs-secondary-color)",
@@ -218,7 +226,7 @@ const ChatPage = () => {
               }}
             >
               {isConnected ? t("common.online") : t("common.offline")}
-            </div>
+            </div> */}
           </div>
         </div>
 
